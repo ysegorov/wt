@@ -1,0 +1,18 @@
+---
+title: Fixture with posts
+
+posts:
+    - src: foo.md
+      url: /foo/
+      title: Foo post
+      modified: 2016-09-18T20:09:00+04:00
+
+    - src: bar.md
+      url: /bar/
+      title: Bar post
+      modified: 2016-09-18T20:10:00+04:00
+
+directories:
+    static: static/
+
+...

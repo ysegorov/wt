@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+This is custom blog mainpage.
+{% for post in posts %}
+{{ post.title }}
+{% endfor %}
+{% endblock %}

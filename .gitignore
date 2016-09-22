@@ -3,7 +3,9 @@ dist/
 *.egg-info/
 *.egg
 *.py[cod]
+.cache/
 __pycache__/
 *.so
 *~
-
+.coverage
+test
