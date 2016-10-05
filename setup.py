@@ -56,7 +56,7 @@ setup(
     author_email='ysegorov@gmail.com',
     license='MIT',
     classifiers=classifiers,
-    keywords='blog generator',
+    keywords='blog static site generator',
     packages=find_packages(exclude=['tests']),
     package_data={'wt': ['templates/*.html', 'templates/*.xml']},
     install_requires=[
@@ -75,6 +75,10 @@ setup(
             'pytest-aiohttp>=0.1.3',
         ]
     },
+    setup_requires=['pytest-runner>=2.0,<3dev'],
+    tests_require=['pytest>=3.0.0',
+                   'pytest-catchlog>=1.2.2',
+                   'pytest-aiohttp>=0.1.3'],
     entry_points={
         'console_scripts': [
             'wt=wt.cli:main'

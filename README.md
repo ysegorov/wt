@@ -1,5 +1,9 @@
 # **wt** - static blog generator
 
+
+[![Build Status](https://travis-ci.org/ysegorov/wt.svg?branch=master)](https://travis-ci.org/ysegorov/wt)
+
+
 ## What
 
 Pretty small and simplified static blog generator with following features:
