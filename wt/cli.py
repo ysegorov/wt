@@ -5,7 +5,7 @@ import logging.config
 import os
 import sys
 
-from .blog import build
+from .blog import build, init
 from .server import server
 
 
@@ -45,6 +45,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
+        'wt.init': {
+            'handlers': ['app'],
+            'level': 'INFO',
+            'propagate': False,
+        },
         'aiohttp': {
             'handlers': ['app'],
             'level': 'DEBUG',
@@ -59,7 +64,7 @@ def abspath(fn):  # pragma: no cover
     return os.path.abspath(os.path.expanduser(fn))
 
 
-class ConfigFileAction(argparse.Action):
+class AbsPathFileAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, abspath(values))
@@ -68,22 +73,28 @@ class ConfigFileAction(argparse.Action):
 def parse_args(args):
 
     parser = argparse.ArgumentParser(
-        description='Command-line interface to static blog generator')
+        description='Command-line interface to static site generator')
     parser.add_argument(
         '-c', '--conf',
         default=abspath('wt.yaml'),
         dest='config',
         metavar='wt.yaml',
-        action=ConfigFileAction,
+        action=AbsPathFileAction,
         help='configuration file (defaults to wt.yaml in current directory)')
 
     subparsers = parser.add_subparsers(
         title='commands',
         dest='command')
 
+    init_cmd = subparsers.add_parser('init',
+                                     help='bootstrap project structure')
+    init_cmd.add_argument(dest='path',
+                          action=AbsPathFileAction,
+                          help='path to folder to bootstrap in')
+
     develop_cmd = subparsers.add_parser(
         'develop',
-        help='start simple http server for blog development')
+        help='start simple http server for development')
     develop_cmd.add_argument(
         '--host',
         default='127.0.0.1',
@@ -96,7 +107,7 @@ def parse_args(args):
         dest='port',
         help='port to bind server to (defaults to 9000)')
 
-    subparsers.add_parser('build', help='build blog')
+    subparsers.add_parser('build', help='build site')
 
     return parser.parse_args(args)
 
@@ -108,5 +119,6 @@ def main():  # pragma: no cover
         ret = server(args.config, args.host, args.port)
     elif args.command == 'build':
         ret = build(args.config)
+    elif args.command == 'init':
+        ret = init(args.path)
     sys.exit(ret)
-    # sys.exit(CMD.get(args.command)(args.config))

@@ -1,0 +1,44 @@
+---
+title: Title
+subtitle: Subtitle
+url: https://www.example.com
+feed_id_domain: www.example.com
+author: John Smith
+
+build:
+    output: output/
+    static: true
+
+pages:
+    - src: foo.md
+      url: /foo/
+      title: Foo title
+      modified: 2016-09-18T11:31:00+04:00
+
+posts:
+    - src: bar.md
+      url: /bar/
+      title: Bar title
+      modified: 2016-09-18T20:10:00+04:00
+
+templates:
+    mainpage: mainpage.html
+    post: content.html
+    page: content.html
+    feed: atom.xml
+
+directories:
+    static: static/
+
+jinja_extensions:
+    - jinja2.ext.i18n
+    - jinja2.ext.do
+    - jinja2.ext.loopcontrols
+    - jinja2.ext.with_
+    - jinja2.ext.autoescape
+
+markdown_extensions:
+    - markdown.extensions.extra
+    - markdown.extensions.toc
+
+...

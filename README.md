@@ -43,6 +43,13 @@ $ pip install wt
 
 ```
 
+### Bootstrapping
+
+```shell
+$ wt init .
+
+```
+
 ### Configuration
 
 Your blog must have configuration file written in [yaml][yaml] and named

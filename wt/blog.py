@@ -6,7 +6,7 @@ import logging
 import os
 from collections import OrderedDict
 from pathlib import Path
-from shutil import copytree, rmtree
+from shutil import copytree, copyfile, rmtree
 
 import jinja2
 import markdown
@@ -26,6 +26,53 @@ def blog(fn):
 def build(fn):
     b = blog(fn)
     b.build()
+    return 0
+
+
+def init(path):
+    src = Path(__file__).parent
+    dst = Path(path)
+
+    logger = logging.getLogger('wt.init')
+
+    to_copy = (
+        (['templates', 'wt.yaml'], ['wt.yaml']),
+        (['templates', 'atom.xml'], ['templates', 'atom.xml']),
+        (['templates', 'content.html'], ['templates', 'content.html']),
+        (['templates', 'mainpage.html'], ['templates', 'mainpage.html']),
+    )
+
+    for left, right in to_copy:
+        l = src.joinpath(*left)
+        r = dst.joinpath(*right)
+        if not l.exists():  # pragma: no cover
+            logger.warn('[!] missing file "%s", skipping', str(l))
+            continue
+        if r.exists():  # pragma: no cover
+            logger.warn('[!] target file "%s" exists, skipping', str(r))
+            continue
+        if not r.parent.exists():
+            r.parent.mkdir(parents=True)
+        copyfile(str(l), str(r))
+        logger.info('[+] "%s" created', str(r))
+
+    to_create = (
+        (['content', 'pages', 'foo.md'], '# Foo page'),
+        (['content', 'posts', 'bar.md'], '# Bar post'),
+        (['static', 'css', 'style.css'], 'body {color: coral}'),
+    )
+    for parts, text in to_create:
+        p = dst.joinpath(*parts)
+        if p.exists():  # pragma: no cover
+            logger.warn('[!] target file "%s" exists, skipping', str(p))
+            continue
+        if not p.parent.exists():
+            p.parent.mkdir(parents=True)
+        p.write_text(text, encoding='utf-8')
+        logger.info('[+] "%s" created', str(p))
+
+    logger.info('[+] done')
+
     return 0
 
 

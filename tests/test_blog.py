@@ -9,7 +9,7 @@ import jinja2
 import pytest
 
 import wt.cli  # noqa
-from wt.blog import Config, Content, Page, Post, Blog, blog, build
+from wt.blog import Config, Content, Page, Post, Blog, blog, build, init
 
 
 dn = os.path.dirname
@@ -247,3 +247,14 @@ def test_build(tmpdir):
         assert target.join(*path).exists()
 
     assert target.join('style.css').exists()
+
+
+def test_init(tmpdir):
+
+    p = tmpdir
+    init(str(p))
+
+    assert p.join('wt.yaml').exists()
+    assert p.join('templates', 'mainpage.html').exists()
+    assert p.join('templates', 'content.html').exists()
+    assert p.join('templates', 'atom.xml').exists()
