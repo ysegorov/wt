@@ -26,13 +26,20 @@ def test_config():
     assert c.foo is c['foo']
     assert c.bar is None
 
-    c = Config(foo={'foo': 1}, baz={'baz': {'baz': 2}}, bar=3)
+    c = Config(foo={'foo': 1, 'x': None, 'y': True, 'z': False},
+               baz={'baz': {'baz': 2}},
+               bar=3)
 
     assert c.path('foo.foo') == 1
     assert c.path('baz.baz.baz') == 2
     assert c.path('bar') == 3
     assert c.path('foo.a') is None
     assert c.path('foo.a.b', 'missed') == 'missed'
+    assert c.path('foo.x') is None
+    assert c.path('foo.x', 1) == 1
+    assert c.path('foo.y') is True
+    assert c.path('foo.y', 2) is True
+    assert c.path('foo.z', True) is False
 
     with pytest.raises(ValueError):
         c.path('bar.a.b')
@@ -109,8 +116,8 @@ def blog_with_posts():
     return blog(str(p))
 
 
-def custom_blog():
-    p = fixtures_dir.joinpath('custom', 'wt.yaml')
+def custom_blog(conf='wt.yaml'):
+    p = fixtures_dir.joinpath('custom', conf)
     return blog(str(p))
 
 
@@ -247,6 +254,20 @@ def test_build(tmpdir):
         assert target.join(*path).exists()
 
     assert target.join('style.css').exists()
+
+
+def test_without_feed(tmpdir):
+    p = fixtures_dir.joinpath('custom')
+    copytree(str(p), str(tmpdir.join('custom')))
+
+    conf = tmpdir.join('custom', 'wt_without_feed.yaml')
+    target = tmpdir.join('custom', 'output')
+    assert conf.exists()
+    assert not target.exists()
+
+    build(str(conf))
+
+    assert not target.join('atom.xml').exists()
 
 
 def test_init(tmpdir):

@@ -95,7 +95,8 @@ class Config(dict):
                           str(src),
                           '.'.join(parts[:idx + 1])))
                 raise ValueError(msg)
-        return src and src.get(parts[-1], dflt) or dflt
+        v = src and src.get(parts[-1], dflt)
+        return dflt if v is None else v
 
 
 class Content(dict):
@@ -165,6 +166,12 @@ class Blog(object):
         return os.path.join(self.workdir, static_root)
 
     @property
+    def with_feed(self):
+        v = self.conf.path('build.feed', True)
+        self.logger.debug('build.feed %s', v)
+        return v
+
+    @property
     def pages(self):
         if self._pages is None:
             pages = self.conf.pages or []
@@ -228,7 +235,7 @@ class Blog(object):
                                     now=now,
                                     posts=self.posts.values(),
                                     pages=self.pages.values())
-        elif path.endswith('atom.xml'):
+        elif path.endswith('atom.xml') and self.with_feed:
             tmpl = self.conf.path('templates.feed', 'atom.xml')
             return self.render_html(tmpl, config=self.conf,
                                     host=host,
@@ -263,7 +270,9 @@ class Blog(object):
             copytree(self.static_root, str(output))
         else:
             output.mkdir(parents=True)
-        for path in itertools.chain(['/', '/atom.xml'],
+        feed = ['/atom.xml'] if self.with_feed else []
+        for path in itertools.chain(['/'],
+                                    feed,
                                     self.pages.keys(),
                                     self.posts.keys()):
             self.logger.info('  + building path "%s"', path)
