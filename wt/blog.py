@@ -167,9 +167,7 @@ class Blog(object):
 
     @property
     def with_feed(self):
-        v = self.conf.path('build.feed', True)
-        self.logger.debug('build.feed %s', v)
-        return v
+        return self.conf.path('build.feed', True)
 
     @property
     def pages(self):
@@ -234,7 +232,7 @@ class Blog(object):
                                     host=host,
                                     now=now,
                                     posts=self.posts.values(),
-                                    pages=self.pages.values())
+                                    pages=self.pages)
         elif path.endswith('atom.xml') and self.with_feed:
             tmpl = self.conf.path('templates.feed', 'atom.xml')
             return self.render_html(tmpl, config=self.conf,
@@ -271,7 +269,8 @@ class Blog(object):
         else:
             output.mkdir(parents=True)
         feed = ['/atom.xml'] if self.with_feed else []
-        for path in itertools.chain(['/'],
+        mainpage = ['/'] if '/' not in self.pages else []
+        for path in itertools.chain(mainpage,
                                     feed,
                                     self.pages.keys(),
                                     self.posts.keys()):

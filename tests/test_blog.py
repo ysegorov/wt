@@ -270,6 +270,39 @@ def test_without_feed(tmpdir):
     assert not target.join('atom.xml').exists()
 
 
+def test_mainpage(tmpdir):
+    p = fixtures_dir.joinpath('custom')
+    copytree(str(p), str(tmpdir.join('custom')))
+
+    conf = tmpdir.join('custom', 'wt_mainpage.yaml')
+    target = tmpdir.join('custom', 'output')
+    assert conf.exists()
+    assert not target.exists()
+
+    b = blog(str(conf))
+
+    orig_render = b.render
+    mainpage_counter = 0
+
+    def render(path, headers=None):
+        nonlocal mainpage_counter
+        if path == '/':
+            mainpage_counter += 1
+        return orig_render(path, headers=headers)
+    b.render = render
+
+    assert mainpage_counter == 0
+
+    b.build()
+
+    assert mainpage_counter == 1
+    assert target.join('index.html').exists()
+
+    mainpage = b.render('/')
+    mainpage = mainpage.lower()
+    assert 'main page' in mainpage
+
+
 def test_init(tmpdir):
 
     p = tmpdir

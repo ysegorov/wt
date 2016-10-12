@@ -5,4 +5,7 @@ This is custom blog mainpage.
 {% for post in posts %}
 {{ post.title }}
 {% endfor %}
+{% if pages.get('/') %}
+{{ pages.get('/').text|markdown }}
+{% endif %}
 {% endblock %}

@@ -4,6 +4,7 @@
 ## 0.3.0 (?)
 
 - [+] #7 add option to skip feed rendering
+- [\*] #8 render mainpage only once in case mainpage content is in pages
 
 
 ## 0.2.0 (2016-10-05)
