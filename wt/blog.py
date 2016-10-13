@@ -143,9 +143,12 @@ class Blog(object):
     class NotFound(Exception):
         pass
 
+    class PaginateSlugError(Exception):
+        pass
+
     def __init__(self, filename):
         self.workdir = os.path.dirname(filename)
-        self._jinja_env = self._pages = self._posts = None
+        self._jinja_env = self._pages = self._posts = self._pagination = None
         self.logger = logging.getLogger('wt.blog')
 
         conf = None
@@ -181,14 +184,14 @@ class Blog(object):
     def posts(self):
         if self._posts is None:
             posts = self.conf.posts or []
-            posts.sort(key=lambda x: x['modified'])
+            posts.sort(key=lambda x: x['modified'], reverse=True)
             self._posts = dst = OrderedDict()
             _prev = None
             for idx, post in enumerate(posts):
                 p = Post.from_dict(self.workdir, post)
                 if idx > 0:
-                    p.prev = _prev
-                    _prev.next = p
+                    p.next = _prev
+                    _prev.prev = p
                 dst[p['url']] = _prev = p
         return self._posts
 
@@ -218,6 +221,29 @@ class Blog(object):
 
         return self._jinja_env
 
+    @property
+    def pagination(self):
+        if self._pagination is None:
+            self._pagination = dst = OrderedDict()
+            paginate_by = self.conf.path('paginate.by')
+            if paginate_by:
+                paginate_slug = self.conf.path('paginate.slug',
+                                               '/page{page_number}.html')
+                cnt = len(self.posts)
+                num_pages = cnt // paginate_by + 1
+                if num_pages > 1:
+                    dst['/'] = 1
+                    for x in range(2, num_pages + 1):
+                        try:
+                            dst[paginate_slug.format(page_number=x)] = x
+                        except KeyError as exc:
+                            msg = ('Bad paginate slug pattern "%s"'
+                                   ' in config (it must have only '
+                                   '"{page_number}" placeholder)')
+                            err = self.PaginateSlugError(msg % paginate_slug)
+                            raise err from exc
+        return self._pagination
+
     def render_html(self, template, **context):
         tmpl = self.env.get_template(template)
         return tmpl.render(**context)
@@ -226,13 +252,8 @@ class Blog(object):
         headers = headers or {}
         host = headers.get('Host')
         now = datetime.datetime.utcnow()
-        if path == '/':
-            tmpl = self.conf.path('templates.mainpage', 'mainpage.html')
-            return self.render_html(tmpl, config=self.conf,
-                                    host=host,
-                                    now=now,
-                                    posts=self.posts.values(),
-                                    pages=self.pages)
+        if path == '/' or path in self.pagination:
+            return self.render_mainpage(path=path, host=host, now=now)
         elif path.endswith('atom.xml') and self.with_feed:
             tmpl = self.conf.path('templates.feed', 'atom.xml')
             return self.render_html(tmpl, config=self.conf,
@@ -270,8 +291,10 @@ class Blog(object):
             output.mkdir(parents=True)
         feed = ['/atom.xml'] if self.with_feed else []
         mainpage = ['/'] if '/' not in self.pages else []
+        pagination = [x for x in self.pagination.keys() if x != '/']
         for path in itertools.chain(mainpage,
                                     feed,
+                                    pagination,
                                     self.pages.keys(),
                                     self.posts.keys()):
             self.logger.info('  + building path "%s"', path)
@@ -283,3 +306,37 @@ class Blog(object):
             parent.mkdir(parents=True, exist_ok=True)
             target.write_text(html, encoding='utf-8')
         self.logger.info('done')
+
+    def render_mainpage(self, **ctx):
+        path = ctx.pop('path')
+        tmpl = self.conf.path('templates.mainpage', 'mainpage.html')
+        posts = list(self.posts.values())
+        pager = current_page = prev_page = next_page = None
+        paginate_by = self.conf.path('paginate.by')
+        if paginate_by is not None:
+            orphans = self.conf.path('paginate.orphans')
+            pager = OrderedDict((y, x) for x, y in self.pagination.items())
+            current_page = self.pagination.get(path, 1)
+            _prev_num, _next_num = current_page + 1, current_page - 1
+            if _prev_num in pager:
+                prev_page = pager[_prev_num]
+            if _next_num in pager:
+                next_page = pager[_next_num]
+            first = (current_page - 1) * paginate_by
+            last = first + paginate_by
+            if orphans and len(posts) - last <= orphans:
+                last += orphans
+                if current_page == len(pager):
+                    raise self.NotFound
+                prev_page = None
+            posts = posts[first:last]
+        return self.render_html(tmpl,
+                                config=self.conf,
+                                paginate_by=paginate_by,
+                                pager=pager,
+                                current_page=current_page,
+                                next_page=next_page,
+                                prev_page=prev_page,
+                                posts=posts,
+                                pages=self.pages,
+                                **ctx)

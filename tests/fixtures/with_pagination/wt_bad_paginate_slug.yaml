@@ -1,0 +1,63 @@
+---
+title: Fixture with pagination
+
+paginate:
+    by: 4
+    orphans: 2
+    slug: p{page}.html
+
+posts:
+    - src: p10.md
+      url: /p10/
+      title: P-10 post
+      modified: 2016-10-13T14:50:00+04:00
+
+    - src: p9.md
+      url: /p9/
+      title: P-09 post
+      modified: 2016-10-13T14:50:00+04:00
+
+    - src: p8.md
+      url: /p8/
+      title: P-08 post
+      modified: 2016-10-13T14:50:00+04:00
+
+    - src: p7.md
+      url: /p7/
+      title: P-07 post
+      modified: 2016-10-13T14:50:00+04:00
+
+    - src: p6.md
+      url: /p6/
+      title: P-06 post
+      modified: 2016-10-13T14:50:00+04:00
+
+    - src: p5.md
+      url: /p5/
+      title: P-05 post
+      modified: 2016-10-13T14:50:00+04:00
+
+    - src: p4.md
+      url: /p4/
+      title: P-04 post
+      modified: 2016-10-13T14:50:00+04:00
+
+    - src: p3.md
+      url: /p3/
+      title: P-03 post
+      modified: 2016-10-13T14:50:00+04:00
+
+    - src: p2.md
+      url: /p2/
+      title: P-02 post
+      modified: 2016-10-13T14:50:00+04:00
+
+    - src: p1.md
+      url: /p1/
+      title: P-01 post
+      modified: 2016-10-13T14:50:00+04:00
+
+directories:
+    static: static/
+
+...

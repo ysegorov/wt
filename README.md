@@ -76,9 +76,9 @@ $ wt build
 
 ## Roadmap
 
-- documentation
-- posts list pagination
-- support for tags
+- [ ] documentation
+- [x] ~~posts list pagination~~
+- [ ] support for tags
 
 
 ## License

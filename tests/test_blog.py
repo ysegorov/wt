@@ -116,6 +116,11 @@ def blog_with_posts():
     return blog(str(p))
 
 
+def blog_with_pagination(conf='wt.yaml'):
+    p = fixtures_dir.joinpath('with_pagination', conf)
+    return blog(str(p))
+
+
 def custom_blog(conf='wt.yaml'):
     p = fixtures_dir.joinpath('custom', conf)
     return blog(str(p))
@@ -183,12 +188,73 @@ def test_blog_with_posts():
     with pytest.raises(Blog.NotFound):
         bwp.render('/baz/')
 
-    assert list(bwp.posts.keys()) == ['/foo/', '/bar/']
+    assert list(bwp.posts.keys()) == ['/bar/', '/foo/']
 
     content = bwp.render('/foo/')
     assert content is not None
     assert 'foo page' in content.lower()
     assert 'foo page content' in content.lower()
+
+
+def test_blog_with_pagination_with_orphans():
+
+    bwp = blog_with_pagination()
+
+    assert isinstance(bwp, Blog)
+    assert len(bwp.posts) > 0
+    assert '/p1/' in bwp.posts
+
+    with pytest.raises(Blog.NotFound):
+        bwp.render('/page3.html')
+
+    content = bwp.render('/')
+    assert content is not None
+    content = content.lower()
+
+    for x in range(10, 1, -1):
+        if x >= 7:
+            assert 'p-%02d post' % x in content
+        else:
+            assert 'p-%02d post' % x not in content
+
+    content = bwp.render('/page2.html')
+    assert content is not None
+    content = content.lower()
+
+    for x in range(10, 1, -1):
+        if x < 7:
+            assert 'p-%02d post' % x in content
+        else:
+            assert 'p-%02d post' % x not in content
+
+
+def test_blog_with_pagination_bad_pagination_slug():
+
+    bwp = blog_with_pagination('wt_bad_paginate_slug.yaml')
+
+    assert isinstance(bwp, Blog)
+
+    with pytest.raises(Blog.PaginateSlugError):
+        bwp.render('/page2.html')
+
+
+def test_blog_with_pagination_no_orphans():
+
+    bwp = blog_with_pagination('wt_no_orphans.yaml')
+
+    assert isinstance(bwp, Blog)
+
+    for url, first, last in (('/', 2, 10),
+                             ('/page2.html', 1, 1)):
+        content = bwp.render(url)
+        assert content is not None
+        content = content.lower()
+
+        for x in range(10, 1, -1):
+            if x >= first and x <= last:
+                assert 'p-%02d post' % x in content
+            else:
+                assert 'p-%02d post' % x not in content
 
 
 def test_custom_blog():

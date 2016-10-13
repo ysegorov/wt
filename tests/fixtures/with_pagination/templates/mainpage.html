@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+This is custom blog mainpage.
+{% for post in posts %}
+{{ post.title }}<br>
+{% endfor %}
+{% if pages.get('/') %}
+{{ pages.get('/').text|markdown }}
+{% endif %}
+{% endblock %}
