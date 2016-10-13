@@ -2,7 +2,7 @@
 title: Fixture with pagination
 
 paginate:
-    by: 4
+    by: 3
     orphans: 2
 
 posts:

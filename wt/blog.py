@@ -227,10 +227,14 @@ class Blog(object):
             self._pagination = dst = OrderedDict()
             paginate_by = self.conf.path('paginate.by')
             if paginate_by:
+                orphans = self.conf.path('paginate.orphans')
                 paginate_slug = self.conf.path('paginate.slug',
                                                '/page{page_number}.html')
                 cnt = len(self.posts)
-                num_pages = cnt // paginate_by + 1
+                num_pages, rem = divmod(cnt, paginate_by)
+                if rem > 0:
+                    if (orphans and rem > orphans) or not orphans:
+                        num_pages += 1
                 if num_pages > 1:
                     dst['/'] = 1
                     for x in range(2, num_pages + 1):
@@ -311,6 +315,7 @@ class Blog(object):
         path = ctx.pop('path')
         tmpl = self.conf.path('templates.mainpage', 'mainpage.html')
         posts = list(self.posts.values())
+        num_posts = len(posts)
         pager = current_page = prev_page = next_page = None
         paginate_by = self.conf.path('paginate.by')
         if paginate_by is not None:
@@ -324,10 +329,8 @@ class Blog(object):
                 next_page = pager[_next_num]
             first = (current_page - 1) * paginate_by
             last = first + paginate_by
-            if orphans and len(posts) - last <= orphans:
+            if orphans and last < num_posts and last + orphans >= num_posts:
                 last += orphans
-                if current_page == len(pager):
-                    raise self.NotFound
                 prev_page = None
             posts = posts[first:last]
         return self.render_html(tmpl,

@@ -205,27 +205,20 @@ def test_blog_with_pagination_with_orphans():
     assert '/p1/' in bwp.posts
 
     with pytest.raises(Blog.NotFound):
-        bwp.render('/page3.html')
+        bwp.render('/page4.html')
 
-    content = bwp.render('/')
-    assert content is not None
-    content = content.lower()
+    for url, first, last in (('/', 8, 10),
+                             ('/page2.html', 5, 7),
+                             ('/page3.html', 1, 4)):
+        content = bwp.render(url)
+        assert content is not None
+        content = content.lower()
 
-    for x in range(10, 1, -1):
-        if x >= 7:
-            assert 'p-%02d post' % x in content
-        else:
-            assert 'p-%02d post' % x not in content
-
-    content = bwp.render('/page2.html')
-    assert content is not None
-    content = content.lower()
-
-    for x in range(10, 1, -1):
-        if x < 7:
-            assert 'p-%02d post' % x in content
-        else:
-            assert 'p-%02d post' % x not in content
+        for x in range(1, 10):
+            if x >= first and x <= last:
+                assert 'p-%02d post' % x in content
+            else:
+                assert 'p-%02d post' % x not in content
 
 
 def test_blog_with_pagination_bad_pagination_slug():
