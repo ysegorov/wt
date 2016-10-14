@@ -2,7 +2,7 @@
 
 {% block content %}
 This is custom blog mainpage.
-{% for post in posts %}
+{% for post in paginator.posts %}
 {{ post.title }}<br>
 {% endfor %}
 {% if pages.get('/') %}

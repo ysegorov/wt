@@ -4,7 +4,7 @@ title: Fixture with pagination
 paginate:
     by: 4
     orphans: 2
-    slug: p{page}.html
+    url: p{page}.html
 
 posts:
     - src: p10.md

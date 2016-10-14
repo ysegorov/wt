@@ -65,6 +65,7 @@ setup(
         'jinja2>=2.8',
         'pyyaml>=3.12',
         'aiohttp~=0.22.5',
+        'cached-property>=1.3.0',
     ],
     extras_require={
         'dev': [

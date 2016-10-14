@@ -10,6 +10,7 @@ import pytest
 
 import wt.cli  # noqa
 from wt.blog import Config, Content, Page, Post, Blog, blog, build, init
+from wt.paginator import Paginator
 
 
 dn = os.path.dirname
@@ -221,13 +222,13 @@ def test_blog_with_pagination_with_orphans():
                 assert 'p-%02d post' % x not in content
 
 
-def test_blog_with_pagination_bad_pagination_slug():
+def test_blog_with_pagination_bad_pagination_url():
 
-    bwp = blog_with_pagination('wt_bad_paginate_slug.yaml')
+    bwp = blog_with_pagination('wt_bad_paginate_url.yaml')
 
     assert isinstance(bwp, Blog)
 
-    with pytest.raises(Blog.PaginateSlugError):
+    with pytest.raises(Paginator.BadUrlError):
         bwp.render('/page2.html')
 
 
