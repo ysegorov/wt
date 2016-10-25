@@ -5,7 +5,7 @@ import logging.config
 import os
 import sys
 
-from .blog import build, init
+from .utils import build, init
 from .server import server
 
 

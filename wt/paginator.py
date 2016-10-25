@@ -6,17 +6,13 @@ from collections import OrderedDict
 
 from cached_property import cached_property
 
+from .exceptions import BadPaginatorUrlError, BadPaginatorPageError
+
 
 class Paginator(object):
 
-    class BadUrlError(Exception):
-        pass
-
-    class BadPageError(Exception):
-        pass
-
     def __init__(self, object_list, path, mainpage=True, **kwargs):
-        self.page_size = kwargs.get('page_size', kwargs.get('by'))
+        self.page_size = kwargs.get('page_size') or kwargs.get('by')
         self.orphans = kwargs.get('orphans')
         self.mainpage = bool(mainpage)
         self.object_list = object_list
@@ -26,17 +22,17 @@ class Paginator(object):
 
         url = kwargs.get('url', '/page{page_number}.html')
         if not url.startswith('/'):
-            raise self.BadUrlError(
+            raise BadPaginatorUrlError(
                 'Bad paginator url pattern "%s" in config '
                 '(must be an absolute path starting with "/")' % url)
         if '{page_number}' not in url:
             msg = ('Bad paginator url pattern "%s" in config '
                    '(it must have "{page_number}" placeholder)')
-            raise self.BadUrlError(msg % url)
+            raise BadPaginatorUrlError(msg % url)
         if not url.endswith('.html') and url[-1] != '/':
             msg = ('Bad paginator url pattern "%s" in config '
                    '(not a directory and doesn\'t have .html extension)')
-            raise self.BadUrlError(msg % url)
+            raise BadPaginatorUrlError(msg % url)
         self.url = url
 
     @cached_property
@@ -60,17 +56,17 @@ class Paginator(object):
             return self.pages[self.path]
         msg = 'Unknown page for path "%s"'
         self.logger.error(msg, self.path)
-        raise self.BadPageError(msg % self.path)
+        raise BadPaginatorPageError(msg % self.path)
 
     @cached_property
-    def posts(self):
+    def items(self):
         if not self.page_size or self.page_size < 1:
             return self.object_list
         page_num, orphans = self.page_num, self.orphans
-        num_posts = len(self.object_list)
+        num_items = len(self.object_list)
         first = (page_num - 1) * self.page_size
         last = first + self.page_size
-        if orphans and last < num_posts and last + orphans >= num_posts:
+        if orphans and last < num_items and last + orphans >= num_items:
             last += orphans
         return self.object_list[first:last]
 

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import glob
 import logging
 import multiprocessing as mp
 import time
 import subprocess
-import sys
 import string
 import traceback
 import urllib.parse
@@ -14,8 +14,8 @@ from pathlib import Path
 
 from aiohttp import web, FileSender
 
-from .blog import blog
-
+from .exceptions import UrlNotFoundError
+from . import utils
 
 logger = logging.getLogger(__name__)
 
@@ -35,22 +35,23 @@ SERVER_ERROR = string.Template(
 
 
 async def aiohttp_handler(request):
-    b = blog(request.app['config'])
+    config = request.app['config']
+    engine = utils.engine(config)
     try:
-        content = b.render(request.path, request.headers)
-    except b.NotFound:
+        content = engine.render(request.path, request.headers)
+    except UrlNotFoundError:
         sender = FileSender()
         path = urllib.parse.urldefrag(request.path)[0]
         path = path.split('?', 1)[0]
         path = urllib.parse.unquote(path)
         path = os.path.normpath(path)
         path = filter(None, path.split('/'))
-        filename = os.path.join(b.static_root, *path)
+        filename = os.path.join(engine.static_root, *path)
         try:
             ret = await sender.send(request, Path(filename))
             return ret
         except FileNotFoundError as err:
-            content = b.render_html('404.html', request=request)
+            content = engine.render_html('404.html', request=request)
             return web.Response(
                 status=404, text=content, content_type='text/html')
     except Exception as exc:
@@ -65,11 +66,11 @@ async def aiohttp_handler(request):
     return web.Response(text=content, content_type=ct)
 
 
-def aiohttp_app(config_filename, loop=None):
+def aiohttp_app(config, loop=None):
     app = web.Application(logger=logger, loop=loop)
     app.router.add_route('GET', '/', aiohttp_handler)
     app.router.add_route('GET', '/{p:.*}', aiohttp_handler)
-    app['config'] = config_filename
+    app['config'] = config
     return app
 
 
@@ -100,6 +101,7 @@ def redirect_stdout(stdout):  # pragma: no cover
 
 
 def server(config, host, port):  # pragma: no cover
+    logger = logging.getLogger('wt.server')
 
     if os.environ.get('IS_WT_CHILD') == 'yes':
         app = aiohttp_app(config)

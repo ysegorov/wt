@@ -1,125 +1,103 @@
 # -*- coding: utf -*-
 
-import string
-
 import pytest
 
+from wt.exceptions import BadPaginatorUrlError, BadPaginatorPageError
 from wt.paginator import Paginator
 
 
-L = string.ascii_lowercase
+def letters__num_pages__equals_5(letters):
+    assert letters().num_pages == 5
 
 
-@pytest.fixture
-def paged_letters():
-    return Paginator(L, '/', page_size=5, orphans=2)
-
-
-@pytest.fixture
-def paged_letters_no_orphans():
-    return Paginator(L, '/', page_size=5)
-
-
-@pytest.fixture
-def non_paged_letters():
-    return Paginator(L, '/')
-
-
-def test_paged_num_pages(paged_letters):
-    assert paged_letters.num_pages == 5
-
-
-def test_paged_num_pages_using_by_in_kwargs():
-    p = Paginator(L, '/page2.html', by=10, orphans=2)
+def letters__num_pages_using_by_10_in_kwargs__equals_3(letters):
+    p = letters('/page2.html', page_size=None, by=10)
     assert p.num_pages == 3
 
 
-def test_paged_no_orphans_num_pages(paged_letters_no_orphans):
-    assert paged_letters_no_orphans.num_pages == 6
+def letters__no_orphans_num_pages__equals_6(letters):
+    assert letters(orphans=None).num_pages == 6
 
 
-def test_non_paged_num_pages(non_paged_letters):
-    assert non_paged_letters.num_pages == 1
+def letters__non_paged_num_pages__equals_1(letters):
+    assert letters(page_size=None).num_pages == 1
 
 
-def test_non_paged_posts(non_paged_letters):
-    assert non_paged_letters.posts == L
+def letters__non_paged_items__equals_original_list(letters, ascii):
+    p = letters(page_size=None)
+    assert p.items == ascii
 
 
-def test_paged_posts(paged_letters):
-    assert paged_letters.posts == L[:5]
+def letters__paged_items_first_page__equals_first_five_ascii(letters, ascii):
+    assert letters().items == ascii[:5]
 
 
-def test_paged_posts_orphans():
-    p = Paginator(L, '/page5.html', page_size=5, orphans=2)
-    assert p.posts == L[-6:]
+def letters__paged_items_orphans__moved_to_previous_page(letters, ascii):
+    p = letters('/page5.html')
+    assert p.items == ascii[-6:]
 
 
-def test_paged_has_next_true():
-    p = Paginator(L, '/page4.html', page_size=5, orphans=2)
+def letters__non_last_page_has_next__is_true(letters):
+    p = letters('/page4.html')
     assert p.has_next is True
 
 
-def test_paged_has_next_false():
-    p = Paginator(L, '/page5.html', page_size=5, orphans=2)
+def letters__last_page_has_next__is_false(letters):
+    p = letters('/page5.html')
     assert p.has_next is False
 
 
-def test_paged_has_prev_true():
-    p = Paginator(L, '/page4.html', page_size=5, orphans=2)
+def letters__non_first_page_has_prev__is_true(letters):
+    p = letters('/page4.html')
     assert p.has_prev is True
 
 
-def test_paged_has_prev_false():
-    p = Paginator(L, '/', page_size=5, orphans=2)
-    assert p.has_prev is False
+def letters__first_page_has_prev__is_false(letters):
+    assert letters().has_prev is False
 
 
-def test_paged_next_page():
-    p = Paginator(L, '/', page_size=5, orphans=2)
-    assert p.next_page == ('/page2.html', 2)
+def letters__first_page_next_page__is_second_page(letters):
+    assert letters().next_page == ('/page2.html', 2)
 
 
-def test_paged_prev_page_mainpage():
-    p = Paginator(L, '/page2.html', page_size=5, orphans=2)
-    assert p.prev_page == ('/', 1)
+def letters__second_page_prev_page__is_mainpage(letters):
+    assert letters('/page2.html').prev_page == ('/', 1)
 
 
-def test_paged_prev_page_no_mainpage():
-    p = Paginator(L, '/page2.html', mainpage=False, page_size=5, orphans=2)
+def letters_with_no_mainpage__second_page_prev_page__is_first_page(letters):
+    p = letters('/page2.html', mainpage=False)
     assert p.prev_page == ('/page1.html', 1)
 
 
-def test_paged_first_page_with_mainpage():
-    p = Paginator(L, '/page2.html', page_size=5, orphans=2)
-    assert p.first_page == ('/', 1)
+def letters__second_page_first_page__is_mainpage(letters):
+    assert letters('/page2.html').first_page == ('/', 1)
 
 
-def test_paged_first_page_without_mainpage():
-    p = Paginator(L, '/page2.html', mainpage=False, page_size=5, orphans=2)
+def letters_with_no_mainpage__second_page_first_page__is_first_page(letters):
+    p = letters('/page2.html', mainpage=False)
     assert p.first_page == ('/page1.html', 1)
 
 
-def test_paged_last_page(paged_letters):
-    assert paged_letters.last_page == ('/page5.html', 5)
+def letters__last_page__is_fifth_page(letters):
+    assert letters().last_page == ('/page5.html', 5)
 
 
-def test_bad_page():
-    p = Paginator(list(range(10)), '/page4.html', page_size=5)
-    with pytest.raises(Paginator.BadPageError):
+def letters__wrong_page__raises_bad_page_error(letters):
+    p = letters('/page4.html', page_size=15)
+    with pytest.raises(BadPaginatorPageError):
         p.page_num
 
 
-def test_url_is_not_absolute():
-    with pytest.raises(Paginator.BadUrlError):
+def paginator_with_not_absolute_url__raises_bad_url_error():
+    with pytest.raises(BadPaginatorUrlError):
         Paginator([1, 2, 3], '/', url='page')
 
 
-def test_url_has_no_placeholder():
-    with pytest.raises(Paginator.BadUrlError):
+def paginator_with_url_without_placeholder__raises_bad_url_error():
+    with pytest.raises(BadPaginatorUrlError):
         Paginator([1, 2, 3], '/', url='/page')
 
 
-def test_url_is_not_dir_not_html():
-    with pytest.raises(Paginator.BadUrlError):
+def paginator_with_url_which_is_neither_dir_nor_html__raises_bad_url_error():
+    with pytest.raises(BadPaginatorUrlError):
         Paginator([1, 2, 3], '/', url='/page/{page_number}')

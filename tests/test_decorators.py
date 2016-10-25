@@ -1,61 +1,63 @@
 # -*- coding: utf-8 -*-
 
-import os
 import time
 
-from wt.decorators import reloadable
+
+def reloadable__missing_file__returns_minus_one(reloadable_factory, tmpdir):
+    buf, load = reloadable_factory()
+    fn = str(tmpdir.join('test1.txt'))
+    assert load(fn) == -1
 
 
-def test_reloadable(tmpdir):
-
-    buf = []
-
-    @reloadable('foo')
-    def load(filename):
-        buf.append(1)
-        try:
-            with open(filename, 'rt') as f:
-                return f.read()
-        except FileNotFoundError:
-            return -1
-
-    p1 = tmpdir.join('test1.txt')
-    p2 = tmpdir.join('test2.txt')
-    fn1 = str(p1)
-    fn2 = str(p2)
-    assert not os.path.isfile(fn1)
-    assert not os.path.isfile(fn2)
-    assert len(buf) == 0
-
-    assert load(fn1) == -1
-    assert len(buf) == 1
-    assert load(fn1) == -1
-    assert load(fn1) == -1
+def reloadable__missing_file__calls_load_once(reloadable_factory, tmpdir):
+    buf, load = reloadable_factory()
+    fn = str(tmpdir.join('test1.txt'))
+    for x in range(1, 5):
+        load(fn)
     assert len(buf) == 1
 
-    p1.write('foo')
-    assert load(fn1) == 'foo'
-    assert load(fn1) == 'foo'
-    assert load(fn1) == 'foo'
+
+def reloadable__existing_file__returns_foo(reloadable_factory, tmpdir):
+    buf, load = reloadable_factory()
+    p = tmpdir.join('test1.txt')
+    p.write('foo')
+    fn = str(p)
+    for x in range(1, 5):
+        assert load(fn) == 'foo'
+
+
+def reloadable__existing_file__calls_load_once(reloadable_factory, tmpdir):
+    buf, load = reloadable_factory()
+    p = tmpdir.join('test1.txt')
+    fn = str(p)
+    p.write('foo')
+    for x in range(1, 5):
+        load(fn)
+        assert len(buf) == 1
+
+
+def reloadable__updating_file__returns_bar(reloadable_factory, tmpdir):
+    buf, load = reloadable_factory()
+    p = tmpdir.join('test1.txt')
+    fn = str(p)
+    p.write('foo')
+    for x in range(1, 5):
+        load(fn)
+    time.sleep(0.1)  # intentional delay
+    p.write('bar')
+    for x in range(1, 5):
+        assert load(fn) == 'bar'
+
+
+def reloadable__updating_file__calls_load_twice(reloadable_factory, tmpdir):
+    buf, load = reloadable_factory()
+    p = tmpdir.join('test1.txt')
+    fn = str(p)
+    p.write('foo')
+    for x in range(1, 5):
+        load(fn)
+    time.sleep(0.1)  # intentional delay
+    p.write('bar')
+    for x in range(1, 5):
+        load(fn)
     assert len(buf) == 2
-
-    time.sleep(0.1)  # intentional delay
-    p1.write('bar')
-    assert load(fn1) == 'bar'
-    assert load(fn1) == 'bar'
-    assert load(fn1) == 'bar'
-    assert len(buf) == 3
-
-    assert load(fn2) == -1
-    assert len(buf) == 4
-
-    p2.write('baz')
-    assert load(fn2) == 'baz'
-    assert load(fn2) == 'baz'
-    assert load(fn2) == 'baz'
-    assert len(buf) == 5
-
-    time.sleep(0.1)  # intentional delay
-    p1.write('foo')
-    assert load(fn1) == 'foo'
-    assert len(buf) == 6
