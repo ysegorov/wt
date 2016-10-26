@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-{% set server_url = 'http://' + host if host else config.url %}
+{%- set server_url = 'http://' + host if host else config.url %}
+{%- set feed_domain = config.path('feed.domain', 'example.com') %}
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ config.lang or 'en' }}">
     <title>{{ config.title }}</title>
     <subtitle>{{ config.subtitle }}</subtitle>
     <link href="{{ server_url }}/" rel="alternative" />
     <link href="{{ server_url }}/atom.xml" rel="self" />
-    <id>tag:{{ config.feed_id_domain }}</id>
+    <id>tag:{{ feed_domain }}</id>
     <updated>{{ now.isoformat() }}Z</updated>
     {% for post in posts|reverse -%}
     <entry>
         <title>{{ post.title }}</title>
         <link href="{{ server_url }}{{ post.url }}" rel="alternate" />
-        <id>tag:{{ config.feed_id_domain }},{{ post.modified.strftime('%Y-%m-%d') }}:{{ post.url }}</id>
+        <id>tag:{{ feed_domain }},{{ post.modified.strftime('%Y-%m-%d') }}:{{ post.url }}</id>
         <updated>{{ post.modified.isoformat() }}Z</updated>
-        <summary>{{ post.summary }}</summary>
+        <summary>{% if post.summary %}{{ post.summary }}{% endif %}</summary>
         <content type="html">
             {% autoescape true -%}
             {{ post.text|markdown }}
@@ -23,5 +24,5 @@
             <name>{{ config.author }}</name>
         </author>
     </entry>
-    {%- endfor %}
+    {% endfor %}
 </feed>

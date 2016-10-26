@@ -2,12 +2,21 @@
 title: Title
 subtitle: Subtitle
 url: https://www.example.com
-feed_id_domain: www.example.com
 author: John Smith
+
+feed:
+    domain: example.com
 
 build:
     output: output/
     static: true
+    feed: true
+
+paginate:
+    by: 10
+    orphans: 2
+    mainpage: true
+    url: /page{page_number}.html
 
 pages:
     - src: foo.md
