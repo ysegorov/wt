@@ -3,6 +3,7 @@
 
 ## 0.3.0 (?)
 
+- [+] #4 local links simple validation
 - [+] #7 add option to skip feed rendering
 - [\*] #8 render mainpage only once in case mainpage content is in pages
 - [+] #2 pagination for posts (mainpage) list

@@ -8,7 +8,7 @@ from wt.base import Config
 from wt.exceptions import UrlNotFoundError
 
 
-def missed_config__init__emits_wryog(missed_config_factory, caplog):
+def missed_config__init__emits_error_in_log(missed_config_factory, caplog):
     missed_config_factory()
     assert 'missing config' in caplog.text.lower()
 
@@ -107,6 +107,18 @@ def sample_blog__render_bar__has_bar_page_title_in_page(sample_blog):
 def sample_blog__static_root_dir__contains_style_css(sample_blog):
     assert os.path.isfile(
         os.path.join(sample_blog.static_root, 'css', 'style.css'))
+
+
+def sample_blog__render_foo__emits_warning_in_log(sample_blog,
+                                                  caplog):
+    sample_blog.render('/foo/')
+    assert 'bad local link "apple-touch-icon.png"' in caplog.text.lower()
+
+
+def broken_link_blog__render_foo__emits_warning_in_log(broken_link_blog,
+                                                       caplog):
+    broken_link_blog.render('/foo/')
+    assert 'bad local link "/bz/"' in caplog.text.lower()
 
 
 def paged_blog__posts_length__equals_to_23(paged_blog_factory):

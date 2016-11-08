@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import datetime
 import itertools
 import logging
@@ -19,6 +20,8 @@ from .paginator import Paginator
 
 
 class WT(object):
+    LINK_RE = re.compile(r'(href|src)=["\'](?P<link>.*?)["\']',
+                         re.U | re.I | re.M)
 
     def __init__(self, filename):
         self.config_filename = filename
@@ -49,6 +52,10 @@ class WT(object):
         return self.conf.path('build.feed', True)
 
     @cached_property
+    def verify_links(self):
+        return self.conf.path('verify.links', False)
+
+    @cached_property
     def pages(self):
         pages = self.conf.pages or []
         return {x['url']: Page.from_dict(self.workdir, x) for x in pages}
@@ -66,6 +73,10 @@ class WT(object):
                 _prev.prev = p
             dst[p['url']] = _prev = p
         return dst
+
+    def paginator(self, path='/'):
+        return Paginator(
+            list(self.posts.values()), path, **self.conf.path('paginate', {}))
 
     @cached_property
     def env(self):
@@ -92,7 +103,10 @@ class WT(object):
 
     def render_html(self, template, **context):
         tmpl = self.env.get_template(template)
-        return tmpl.render(**context)
+        html = tmpl.render(**context)
+        if self.verify_links:
+            html = self.do_verify_links(html)
+        return html
 
     def render(self, path, headers=None):
         headers = headers or {}
@@ -118,7 +132,7 @@ class WT(object):
 
         tmpl = self.conf.path('templates.mainpage', 'mainpage.html')
         posts = list(self.posts.values())
-        paginator = Paginator(posts, path, **self.conf.path('paginate', {}))
+        paginator = self.paginator(path)
         if path == '/' or path in paginator.pages:
             return self.render_html(tmpl,
                                     config=self.conf,
@@ -151,8 +165,7 @@ class WT(object):
             output.mkdir(parents=True)
         feed = ['/atom.xml'] if self.with_feed else []
         mainpage = ['/'] if '/' not in self.pages else []
-        paginator = Paginator(
-            list(self.posts.values()), '/', **self.conf.path('paginate', {}))
+        paginator = self.paginator()
         pages = [x for x in paginator.pages.keys() if x != '/']
         for path in itertools.chain(mainpage,
                                     feed,
@@ -168,3 +181,32 @@ class WT(object):
             parent.mkdir(parents=True, exist_ok=True)
             target.write_text(html, encoding='utf-8')
         self.logger.info('done')
+
+    def do_verify_links(self, html):
+
+        def is_local(link):  # TODO better test for local links?
+            return (
+                link and
+                link[:2] != '//' and
+                link[:7] != 'http://' and
+                link[:8] != 'https://'
+            )
+
+        for match in self.LINK_RE.finditer(html):
+            link = match.group('link')
+            if is_local(link) and not self.is_valid_local_link(link):
+                self.logger.warn('[!] Bad local link "%s" found', link)
+        return html
+
+    def is_valid_local_link(self, link):
+        return (
+            link == '/' or
+            link == '/atom.xml' or
+            link in self.pages or
+            link in self.posts or
+            link in self.paginator().pages or
+            self.is_valid_static_link(link)
+        )
+
+    def is_valid_static_link(self, link):
+        return os.path.exists(os.path.join(self.static_root, link.lstrip('/')))

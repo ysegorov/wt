@@ -53,9 +53,9 @@ def init(path):
         logger.info('[+] "%s" created', str(r))
 
     to_create = (
-        (['content', 'pages', 'foo.md'], '# Foo page title'),
-        (['content', 'posts', 'bar.md'], '# Bar post title'),
-        (['content', 'posts', 'baz.md'], '# Baz post title'),
+        (['content', 'pages', 'foo.md'], '# Foo page title\n[bar](/bar/)'),
+        (['content', 'posts', 'bar.md'], '# Bar post title\n[baz](/baz/)'),
+        (['content', 'posts', 'baz.md'], '# Baz post title\n[foo](/foo/)'),
         (['static', 'css', 'style.css'], '/*styles*/\nbody {color: coral}'),
     )
     for parts, text in to_create:

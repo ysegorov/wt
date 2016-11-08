@@ -157,6 +157,14 @@ def broken_sample_blog(tmpdir):
     return WT(str(tmpdir.join('wt.yaml')))
 
 
+@pytest.fixture(scope='function')
+def broken_link_blog(tmpdir):
+    init(str(tmpdir))
+    foo = tmpdir.join('content', 'pages', 'foo.md')
+    foo.write('[bar](/bz/)')
+    return WT(str(tmpdir.join('wt.yaml')))
+
+
 MAINPAGE_PAGED = """\
 {% extends "base.html" %}
 {% block content %}

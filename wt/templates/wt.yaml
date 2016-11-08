@@ -7,6 +7,9 @@ author: John Smith
 feed:
     domain: example.com
 
+verify:
+    links: true
+
 build:
     output: output/
     static: true
