@@ -23,10 +23,11 @@ class WT(object):
     LINK_RE = re.compile(r'(href|src)=["\'](?P<link>.*?)["\']',
                          re.U | re.I | re.M)
 
-    def __init__(self, filename):
+    def __init__(self, filename, is_prod=False):
         self.config_filename = filename
         self.workdir = os.path.dirname(filename)
         self.logger = logging.getLogger('wt.blog')
+        self.is_prod = is_prod
 
         conf = None
         if os.path.isfile(filename):
@@ -117,16 +118,21 @@ class WT(object):
             return self.render_html(tmpl, config=self.conf,
                                     host=host,
                                     now=now,
+                                    is_prod=self.is_prod,
                                     posts=self.posts.values(),
                                     pages=self.pages.values())
         elif path in self.pages:
             tmpl = self.conf.path('templates.page', 'page.html')
             return self.render_html(tmpl,
+                                    now=now,
+                                    is_prod=self.is_prod,
                                     content=self.pages[path],
                                     config=self.conf)
         elif path in self.posts:
             tmpl = self.conf.path('templates.post', 'post.html')
             return self.render_html(tmpl,
+                                    now=now,
+                                    is_prod=self.is_prod,
                                     content=self.posts[path],
                                     config=self.conf)
 
@@ -139,6 +145,7 @@ class WT(object):
                                     paginator=paginator,
                                     posts=posts,
                                     pages=self.pages,
+                                    is_prod=self.is_prod,
                                     host=host,
                                     now=now)
 

@@ -14,7 +14,7 @@ def engine(fn):  # pragma: no cover
 
 
 def build(fn):  # pragma: no cover
-    b = engine(fn)
+    b = WT(fn, is_prod=True)
     try:
         b.build()
     except Exception as exc:
