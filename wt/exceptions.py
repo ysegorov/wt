@@ -15,3 +15,7 @@ class BadPaginatorUrlError(WTError):
 
 class BadPaginatorPageError(WTError):
     """Bad paginator page error"""
+
+
+class InvalidLocalLinkError(WTError):
+    """Invalid local link error"""

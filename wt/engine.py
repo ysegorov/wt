@@ -15,7 +15,7 @@ import yaml
 from cached_property import cached_property
 
 from .base import Config, Page, Post
-from .exceptions import UrlNotFoundError
+from .exceptions import UrlNotFoundError, InvalidLocalLinkError
 from .paginator import Paginator
 
 
@@ -203,6 +203,8 @@ class WT(object):
             link = match.group('link')
             if is_local(link) and not self.is_valid_local_link(link):
                 self.logger.warn('[!] Bad local link "%s" found', link)
+                if self.is_prod:
+                    raise InvalidLocalLinkError
         return html
 
     def is_valid_local_link(self, link):

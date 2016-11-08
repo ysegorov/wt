@@ -158,11 +158,14 @@ def broken_sample_blog(tmpdir):
 
 
 @pytest.fixture(scope='function')
-def broken_link_blog(tmpdir):
-    init(str(tmpdir))
-    foo = tmpdir.join('content', 'pages', 'foo.md')
-    foo.write('[bar](/bz/)')
-    return WT(str(tmpdir.join('wt.yaml')))
+def broken_link_factory(tmpdir):
+
+    def factory(**kwargs):
+        init(str(tmpdir))
+        foo = tmpdir.join('content', 'pages', 'foo.md')
+        foo.write('[bar](/bz/)')
+        return WT(str(tmpdir.join('wt.yaml')), **kwargs)
+    return factory
 
 
 MAINPAGE_PAGED = """\

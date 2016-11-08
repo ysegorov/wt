@@ -5,7 +5,7 @@ import os
 import pytest
 
 from wt.base import Config
-from wt.exceptions import UrlNotFoundError
+from wt.exceptions import UrlNotFoundError, InvalidLocalLinkError
 
 
 def missed_config__init__emits_error_in_log(missed_config_factory, caplog):
@@ -115,10 +115,17 @@ def sample_blog__render_foo__emits_warning_in_log(sample_blog,
     assert 'bad local link "apple-touch-icon.png"' in caplog.text.lower()
 
 
-def broken_link_blog__render_foo__emits_warning_in_log(broken_link_blog,
+def broken_link_blog__render_foo__emits_warning_in_log(broken_link_factory,
                                                        caplog):
+    broken_link_blog = broken_link_factory()
     broken_link_blog.render('/foo/')
     assert 'bad local link "/bz/"' in caplog.text.lower()
+
+
+def broken_link_blog__build__raises_invalidlocalinkerror(broken_link_factory):
+    broken_link_blog = broken_link_factory(is_prod=True)
+    with pytest.raises(InvalidLocalLinkError):
+        broken_link_blog.build()
 
 
 def paged_blog__posts_length__equals_to_23(paged_blog_factory):
