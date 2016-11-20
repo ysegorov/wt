@@ -3,6 +3,7 @@
 
 ## 0.3.0 (?)
 
+- [+] #21 wt instance in rendering context
 - [+] #20 allow jinja filters and globals to be extended using `jinja_helpers`
   module
 - [+] #18 page and post configuration can have custom template for rendering

@@ -96,7 +96,9 @@ class WT(object):
         now = datetime.datetime.utcnow()
         if path.endswith('atom.xml') and self.with_feed:
             tmpl = self.conf.path('templates.feed', 'atom.xml')
-            return self.render_html(tmpl, config=self.conf,
+            return self.render_html(tmpl,
+                                    wt=self,
+                                    config=self.conf,
                                     host=host,
                                     now=now,
                                     is_prod=self.is_prod,
@@ -117,6 +119,7 @@ class WT(object):
             tmpl = (
                 post.template or self.conf.path('templates.post', 'post.html'))
             return self.render_html(tmpl,
+                                    wt=self,
                                     now=now,
                                     is_prod=self.is_prod,
                                     content=post,
@@ -127,6 +130,7 @@ class WT(object):
         paginator = self.paginator(path)
         if path == '/' or path in paginator.pages:
             return self.render_html(tmpl,
+                                    wt=self,
                                     config=self.conf,
                                     paginator=paginator,
                                     posts=posts,
