@@ -141,6 +141,7 @@ def sample_blog(tmpdir):
     init(str(tmpdir))
     return WT(str(tmpdir.join('wt.yaml')))
 
+
 BROKEN_CONTENT = """\
 {% extends "base.html" %}
 {% block content %}
@@ -177,6 +178,28 @@ def mailto_link_factory(tmpdir):
         foo.write('[bar](mailto:bz@bz.co)')
         return WT(str(tmpdir.join('wt.yaml')), **kwargs)
     return factory
+
+
+FOO_TEMPLATE = """\
+{% extends "base.html" %}
+{% block content %}
+FOO TEMPLATE
+{% endblock %}
+"""
+
+
+@pytest.fixture(scope='function')
+def custom_template_blog(tmpdir):
+    init(str(tmpdir))
+    foo_tmpl = tmpdir.join('templates', 'foo.html')
+    foo_tmpl.write(FOO_TEMPLATE)
+    fn = str(tmpdir.join('wt.yaml'))
+    with open(fn, encoding='utf-8') as f:
+        conf = yaml.load(f)
+    conf['pages'][0]['template'] = 'foo.html'
+    with open(fn, 'w') as f:
+        yaml.dump(conf, f)
+    return WT(fn)
 
 
 MAINPAGE_PAGED = """\

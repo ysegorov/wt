@@ -3,6 +3,7 @@
 
 ## 0.3.0 (?)
 
+- [+] #18 page and post configuration can have custom template for rendering
 - [+] #4, #16 local links validation
 - [+] #7 add option to skip feed rendering
 - [\*] #8 render mainpage only once in case mainpage content is in pages

@@ -129,6 +129,11 @@ def mailto_link_blog__build__is_ok(mailto_link_factory):
     assert os.path.exists(os.path.join(output, 'foo', 'index.html'))
 
 
+def custom_template_blog__render__uses_foo_template(custom_template_blog):
+    content = custom_template_blog.render('/foo/')
+    assert 'FOO TEMPLATE' in content
+
+
 def paged_blog__posts_length__equals_to_23(paged_blog_factory):
     b = paged_blog_factory()
     assert len(b.posts) == 23

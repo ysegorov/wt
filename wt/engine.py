@@ -123,18 +123,22 @@ class WT(object):
                                     posts=self.posts.values(),
                                     pages=self.pages.values())
         elif path in self.pages:
-            tmpl = self.conf.path('templates.page', 'page.html')
+            page = self.pages[path]
+            tmpl = (
+                page.template or self.conf.path('templates.page', 'page.html'))
             return self.render_html(tmpl,
                                     now=now,
                                     is_prod=self.is_prod,
-                                    content=self.pages[path],
+                                    content=page,
                                     config=self.conf)
         elif path in self.posts:
-            tmpl = self.conf.path('templates.post', 'post.html')
+            post = self.posts[path]
+            tmpl = (
+                post.template or self.conf.path('templates.post', 'post.html'))
             return self.render_html(tmpl,
                                     now=now,
                                     is_prod=self.is_prod,
-                                    content=self.posts[path],
+                                    content=post,
                                     config=self.conf)
 
         tmpl = self.conf.path('templates.mainpage', 'mainpage.html')
