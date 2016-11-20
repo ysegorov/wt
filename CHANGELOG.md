@@ -3,6 +3,8 @@
 
 ## 0.3.0 (?)
 
+- [+] #20 allow jinja filters and globals to be extended using `jinja_helpers`
+  module
 - [+] #18 page and post configuration can have custom template for rendering
 - [+] #4, #16 local links validation
 - [+] #7 add option to skip feed rendering

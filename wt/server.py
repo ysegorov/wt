@@ -3,6 +3,7 @@
 import os
 import sys
 import glob
+import itertools
 import logging
 import multiprocessing as mp
 import time
@@ -74,14 +75,15 @@ def aiohttp_app(config, loop=None):
     return app
 
 
-def code_changed():  # pragma: no cover
+def code_changed(workdir):  # pragma: no cover
     mtime = time.time()
-    cwd = os.path.abspath(os.path.dirname(__file__))
+    wtdir = os.path.abspath(os.path.dirname(__file__))
 
     while True:
-        files = glob.iglob(os.path.join(cwd, '**', '*.py'), recursive=True)
+        wtfiles = glob.iglob(os.path.join(wtdir, '**', '*.py'), recursive=True)
+        files = glob.iglob(os.path.join(workdir, '**', '*.py'), recursive=True)
         changed = False
-        for fn in files:
+        for fn in itertools.chain(wtfiles, files):
             _mtime = os.stat(fn).st_mtime
             if _mtime > mtime:
                 mtime = _mtime
@@ -108,7 +110,7 @@ def server(config, host, port):  # pragma: no cover
         logger.debug('Server started at %s:%s...', host, port)
         return web.run_app(app, host=host, port=port)
 
-    checker = code_changed()
+    checker = code_changed(os.path.dirname(config))
 
     def run():
         env = os.environ.copy()
@@ -128,7 +130,7 @@ def server(config, host, port):  # pragma: no cover
     try:
         while True:
             if next(checker):
-                logger.debug('wt code changed, restarting server...')
+                logger.debug('some python code changed, restarting server...')
                 t.terminate()
                 time.sleep(0.1)
                 p.terminate()

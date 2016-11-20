@@ -10,12 +10,11 @@ from collections import OrderedDict
 from pathlib import Path
 from shutil import copytree, rmtree
 
-import jinja2
-import markdown
 import yaml
 from cached_property import cached_property
 
 from .base import Config, Page, Post
+from .jinja import get_env
 from .exceptions import UrlNotFoundError, InvalidLocalLinkError
 from .paginator import Paginator
 
@@ -82,26 +81,7 @@ class WT(object):
 
     @cached_property
     def env(self):
-        loader = jinja2.ChoiceLoader([
-            jinja2.FileSystemLoader(
-                os.path.join(self.workdir, 'templates')),
-            jinja2.FileSystemLoader(
-                os.path.join(os.path.dirname(__file__), 'templates'))
-        ])
-        ext = self.conf.jinja_extensions or []
-        if 'jinja2.ext.autoescape' not in ext:
-            ext.append('jinja2.ext.autoescape')
-        env = jinja2.Environment(loader=loader, extensions=ext)
-
-        md_exts = self.conf.markdown_extensions or []
-
-        def md(text):
-            return markdown.markdown(text,
-                                     extensions=md_exts,
-                                     output_format='html5')
-
-        env.filters['markdown'] = md
-        return env
+        return get_env(self.workdir, **self.conf.path('jinja', {}))
 
     def render_html(self, template, **context):
         tmpl = self.env.get_template(template)
@@ -127,6 +107,7 @@ class WT(object):
             tmpl = (
                 page.template or self.conf.path('templates.page', 'page.html'))
             return self.render_html(tmpl,
+                                    wt=self,
                                     now=now,
                                     is_prod=self.is_prod,
                                     content=page,

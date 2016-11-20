@@ -46,15 +46,16 @@ templates:
 directories:
     static: static/
 
-jinja_extensions:
-    - jinja2.ext.i18n
-    - jinja2.ext.do
-    - jinja2.ext.loopcontrols
-    - jinja2.ext.with_
-    - jinja2.ext.autoescape
+jinja:
+    extensions:
+      - jinja2.ext.i18n
+      - jinja2.ext.do
+      - jinja2.ext.loopcontrols
+      - jinja2.ext.with_
+      - jinja2.ext.autoescape
 
-markdown_extensions:
-    - markdown.extensions.extra
-    - markdown.extensions.toc
+    markdown_extensions:
+        - markdown.extensions.extra
+        - markdown.extensions.toc
 
 ...
