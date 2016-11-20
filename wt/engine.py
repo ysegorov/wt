@@ -5,6 +5,7 @@ import re
 import datetime
 import itertools
 import logging
+import urllib.parse
 from collections import OrderedDict
 from pathlib import Path
 from shutil import copytree, rmtree
@@ -191,13 +192,9 @@ class WT(object):
 
     def do_verify_links(self, html):
 
-        def is_local(link):  # TODO better test for local links?
-            return (
-                link and
-                link[:2] != '//' and
-                link[:7] != 'http://' and
-                link[:8] != 'https://'
-            )
+        def is_local(link):
+            o = urllib.parse.urlparse(link)
+            return o.scheme == '' and o.netloc == ''
 
         for match in self.LINK_RE.finditer(html):
             link = match.group('link')

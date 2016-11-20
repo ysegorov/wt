@@ -109,12 +109,6 @@ def sample_blog__static_root_dir__contains_style_css(sample_blog):
         os.path.join(sample_blog.static_root, 'css', 'style.css'))
 
 
-def sample_blog__render_foo__emits_warning_in_log(sample_blog,
-                                                  caplog):
-    sample_blog.render('/foo/')
-    assert 'bad local link "apple-touch-icon.png"' in caplog.text.lower()
-
-
 def broken_link_blog__render_foo__emits_warning_in_log(broken_link_factory,
                                                        caplog):
     broken_link_blog = broken_link_factory()
@@ -126,6 +120,13 @@ def broken_link_blog__build__raises_invalidlocalinkerror(broken_link_factory):
     broken_link_blog = broken_link_factory(is_prod=True)
     with pytest.raises(InvalidLocalLinkError):
         broken_link_blog.build()
+
+
+def mailto_link_blog__build__is_ok(mailto_link_factory):
+    mailto_link_blog = mailto_link_factory(is_prod=True)
+    mailto_link_blog.build()
+    output = str(mailto_link_blog.output_path)
+    assert os.path.exists(os.path.join(output, 'foo', 'index.html'))
 
 
 def paged_blog__posts_length__equals_to_23(paged_blog_factory):

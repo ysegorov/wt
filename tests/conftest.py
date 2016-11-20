@@ -168,6 +168,17 @@ def broken_link_factory(tmpdir):
     return factory
 
 
+@pytest.fixture(scope='function')
+def mailto_link_factory(tmpdir):
+
+    def factory(**kwargs):
+        init(str(tmpdir))
+        foo = tmpdir.join('content', 'pages', 'foo.md')
+        foo.write('[bar](mailto:bz@bz.co)')
+        return WT(str(tmpdir.join('wt.yaml')), **kwargs)
+    return factory
+
+
 MAINPAGE_PAGED = """\
 {% extends "base.html" %}
 {% block content %}
