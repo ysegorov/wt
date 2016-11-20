@@ -196,19 +196,20 @@ class WT(object):
 
     def do_verify_links(self, html):
 
-        def is_local(link):
-            o = urllib.parse.urlparse(link)
-            return o.scheme == '' and o.netloc == ''
+        def is_local(parsed_link):
+            return parsed_link.scheme == '' and parsed_link.netloc == ''
 
         for match in self.LINK_RE.finditer(html):
             link = match.group('link')
-            if is_local(link) and not self.is_valid_local_link(link):
+            parsed = urllib.parse.urlparse(link)
+            if is_local(parsed) and not self.is_valid_local_link(parsed):
                 self.logger.warn('[!] Bad local link "%s" found', link)
                 if self.is_prod:
                     raise InvalidLocalLinkError
         return html
 
-    def is_valid_local_link(self, link):
+    def is_valid_local_link(self, parsed_link):
+        link = parsed_link.path
         return (
             link == '/' or
             link == '/atom.xml' or

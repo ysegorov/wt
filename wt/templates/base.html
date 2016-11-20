@@ -16,6 +16,7 @@
         <!-- Place favicon.ico in the root directory -->
 
         {% block head %}
+        <link rel="stylesheet" href="/css/style.css?ts={{ now.timestamp()|int }}">
         {% endblock %}
     </head>
     <body>
