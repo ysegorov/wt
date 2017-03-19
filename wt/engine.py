@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import re
 import datetime
 import itertools
 import logging
@@ -17,11 +16,10 @@ from .base import Config, Page, Post
 from .jinja import get_env
 from .exceptions import UrlNotFoundError, InvalidLocalLinkError
 from .paginator import Paginator
+from .parser import HTMLParser
 
 
 class WT(object):
-    LINK_RE = re.compile(r'(href|src)=["\'](?P<link>.*?)["\']',
-                         re.U | re.I | re.M)
 
     def __init__(self, filename, is_prod=False):
         self.config_filename = filename
@@ -82,6 +80,22 @@ class WT(object):
     @cached_property
     def env(self):
         return get_env(self.workdir, **self.conf.path('jinja', {}))
+
+    @cached_property
+    def parser(self):
+        return HTMLParser()
+
+    @cached_property
+    def local_links(self):
+        links = list(
+            itertools.chain(
+                ['/'] if '/' not in self.pages else [],
+                ['/atom.xml'] if self.with_feed else [],
+                (x for x in self.paginator().pages.keys() if x != '/'),
+                self.pages.keys(),
+                self.posts.keys(),
+            ))
+        return links
 
     def render_html(self, template, **context):
         tmpl = self.env.get_template(template)
@@ -151,7 +165,7 @@ class WT(object):
     def build(self):
         build_static = bool(self.conf.path('build.static', False))
         output = self.output_path
-        self.logger.info('Building blog to %s directory', str(output))
+        self.logger.info('Building pages to %s directory', str(output))
         if output.exists():
             self.logger.info('  * output directory exists, cleaning')
             rmtree(str(output))
@@ -160,15 +174,7 @@ class WT(object):
             copytree(self.static_root, str(output))
         else:
             output.mkdir(parents=True)
-        feed = ['/atom.xml'] if self.with_feed else []
-        mainpage = ['/'] if '/' not in self.pages else []
-        paginator = self.paginator()
-        pages = [x for x in paginator.pages.keys() if x != '/']
-        for path in itertools.chain(mainpage,
-                                    feed,
-                                    pages,
-                                    self.pages.keys(),
-                                    self.posts.keys()):
+        for path in self.local_links:
             self.logger.info('  + building path "%s"', path)
             html = self.render(path)
             if path.endswith('/'):
@@ -181,28 +187,22 @@ class WT(object):
 
     def do_verify_links(self, html):
 
+        links = self.parser.get_links(html)
+
         def is_local(parsed_link):
             return parsed_link.scheme == '' and parsed_link.netloc == ''
 
-        for match in self.LINK_RE.finditer(html):
-            link = match.group('link')
+        for link in links:
             parsed = urllib.parse.urlparse(link)
-            if is_local(parsed) and not self.is_valid_local_link(parsed):
-                self.logger.warn('[!] Bad local link "%s" found', link)
+            if is_local(parsed) and \
+               parsed.path not in self.local_links and \
+               not self.is_valid_static_link(parsed.path):
+                # FIXME show line numbers?
+                # this is generated html so line numbers might not be useful
+                self.logger.warning('[!] Bad local link "%s" found', link)
                 if self.is_prod:
                     raise InvalidLocalLinkError
         return html
-
-    def is_valid_local_link(self, parsed_link):
-        link = parsed_link.path
-        return (
-            link == '/' or
-            link == '/atom.xml' or
-            link in self.pages or
-            link in self.posts or
-            link in self.paginator().pages or
-            self.is_valid_static_link(link)
-        )
 
     def is_valid_static_link(self, link):
         return os.path.exists(os.path.join(self.static_root, link.lstrip('/')))

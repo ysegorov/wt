@@ -62,8 +62,11 @@ async def aiohttp_handler(request):
             status=500,
             text=SERVER_ERROR.substitute(error=content, title=str(exc)),
             content_type='text/html')
-    ct = ('text/xml'
-          if request.path.endswith('.xml') else 'text/html')
+    ct = {
+        '.xml': 'text/xml',
+        '.txt': 'text/plain'
+    }
+    ct = ct.get(request.path[-4:].lower(), 'text/html')
     return web.Response(text=content, content_type=ct)
 
 
