@@ -64,6 +64,20 @@ def ordered_object_dict__bad_path__raises(ordered_object_dict):
         ordered_object_dict.path('foo.bar')
 
 
+def object_dict_with_env__expands_value_by_key_from_env(object_dict_with_env):
+    os.environ.setdefault('URL1', 'http://foo.com')
+    assert object_dict_with_env.foo == 'http://foo.com'
+
+
+def object_dict_with_env__expands_value_by_path_from_env(object_dict_with_env):
+    os.environ.setdefault('URL2', 'bar.com')
+    assert object_dict_with_env.path('bar.baz') == 'bar.com'
+
+
+def object_dict_with_env__keeps_placeholder__if_no_var(object_dict_with_env):
+    assert object_dict_with_env.boo == '${HOST}'
+
+
 def content__src_attr_expands_to_abspath__ok(content):
     assert os.path.isabs(content.src)
 

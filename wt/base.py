@@ -4,6 +4,7 @@ import os
 import logging
 
 from collections import OrderedDict
+from string import Template
 
 
 logger = logging.getLogger('wt.base')
@@ -12,10 +13,15 @@ logger = logging.getLogger('wt.base')
 class ObjectDict(dict):
 
     def __getattr__(self, name, default=None):
-        return self.get(name, default)
+        return self.env_value(self.get(name, default))
 
     def __setattr__(self, name, value):
         self[name] = value
+
+    def env_value(self, v):
+        if isinstance(v, str):
+            return Template(v).safe_substitute(**os.environ)
+        return v
 
     def path(self, path, dflt=None):
         parts = path.split('.')
@@ -35,7 +41,7 @@ class ObjectDict(dict):
         v = src and src.get(parts[-1], dflt)
         if isinstance(v, dict):
             v = ObjectDict(v)
-        return dflt if v is None else v
+        return self.env_value(dflt if v is None else v)
 
 
 class OrderedObjectDict(OrderedDict, ObjectDict):

@@ -53,6 +53,17 @@ def ordered_object_dict():
 
 
 @pytest.fixture(scope='function')
+def object_dict_with_env():
+    return ObjectDict({
+        'foo': '${URL1}',
+        'bar': {
+            'baz': '${URL2}'
+        },
+        'boo': '${HOST}',
+    })
+
+
+@pytest.fixture(scope='function')
 def content(tmpdir):
     fn = tmpdir.mkdir('content').join('foo.md')
     fn.write('bar')
