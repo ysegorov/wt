@@ -1,6 +1,12 @@
 # Changelog
 
 
+## 0.3.1 (2017-03-21)
+
+- [\*] minor fix for pypi targeted readme translation from md to rst
+  (`pypandoc` was not installed in virtualenv during build)
+
+
 ## 0.3.0 (2017-03-21)
 
 - [+] #21 wt instance in rendering context
