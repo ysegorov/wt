@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 0.3.0 (?)
+## 0.3.0 (2017-03-21)
 
 - [+] #21 wt instance in rendering context
 - [+] #20 allow jinja filters and globals to be extended using `jinja_helpers`
