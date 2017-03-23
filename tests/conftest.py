@@ -153,6 +153,49 @@ def sample_blog(tmpdir):
     return WT(str(tmpdir.join('wt.yaml')))
 
 
+CONF_PAGES = """\
+---
+title: Item 1
+---
+title: Item 2
+---
+title: Item 3
+...
+"""
+CONF_TEXT = """\
+---
+mainpage:
+    title: mainpage title
+    text: mainpage text
+foo: some text
+bar:
+    baz: 12
+...
+"""
+
+
+@pytest.fixture(scope='function')
+def conf_with_nested_file(tmpdir):
+    pages = tmpdir.join('pages.yaml')
+    pages.write_text(CONF_PAGES, 'utf-8')
+    text = tmpdir.join('text.yaml')
+    text.write_text(CONF_TEXT, 'utf-8')
+
+    def factory(workdir=True):
+        data = {
+            'title': 'Hello',
+            'pages': '{file}pages.yaml',
+            'data': {
+                'text': '{file}text.yaml'
+            }
+        }
+        if workdir:
+            data['_workdir'] = str(tmpdir)
+        return ObjectDict(data)
+
+    return factory
+
+
 BROKEN_CONTENT = """\
 {% extends "base.html" %}
 {% block content %}

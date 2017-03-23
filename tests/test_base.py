@@ -82,12 +82,12 @@ def content__src_attr_expands_to_abspath__ok(content):
     assert os.path.isabs(content.src)
 
 
-def content_without_src__works(content_without_src):
-    assert content_without_src.src is None
-
-
 def content__text_attr_loaded_from_file__ok(content):
     assert content.text == 'bar'
+
+
+def content_without_src__works(content_without_src):
+    assert content_without_src.src is None
 
 
 def content_without_src__text_attr__is_empty(content_without_src):
@@ -100,3 +100,17 @@ def post__text_attr_loaded_from_file__ok(post):
 
 def page__text_attr_loaded_from_file__ok(page):
     assert page.text == 'lorem'
+
+
+def conf_with_nested_file__loads_child_yaml__ok(conf_with_nested_file):
+    conf = conf_with_nested_file()
+    assert isinstance(conf.pages, list), 'List of pages expected'
+    assert len(conf.pages) == 3, 'Pages list must have 3 items'
+    assert isinstance(conf.path('data.text'), dict), 'Dict expected'
+    assert conf.path('data.text.bar.baz') == 12
+
+
+def conf_with_nested_file__loads_child_yaml__fails(conf_with_nested_file):
+    conf = conf_with_nested_file(workdir=False)
+    with pytest.raises(FileNotFoundError):
+        conf.path('data.text.bar.baz')

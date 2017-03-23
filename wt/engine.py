@@ -40,6 +40,7 @@ class WT(object):
             self.logger.warn('Missing config file "%s"', filename)
 
         self.conf = Config(conf or {})
+        self.conf._workdir = self.workdir
 
     @cached_property
     def static_root(self):

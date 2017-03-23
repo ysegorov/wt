@@ -6,21 +6,41 @@ import logging
 from collections import OrderedDict
 from string import Template
 
+import yaml
+
+from .decorators import reloadable
+
 
 logger = logging.getLogger('wt.base')
+
+
+@reloadable('(re)loading nested configuration...')
+def load_yaml(filename):
+    with open(filename, encoding='utf-8') as f:
+        data = list(yaml.load_all(f))
+    return data[0] if len(data) == 1 else data
 
 
 class ObjectDict(dict):
 
     def __getattr__(self, name, default=None):
-        return self.env_value(self.get(name, default))
+        return self.process_value(self.get(name, default))
 
     def __setattr__(self, name, value):
         self[name] = value
 
-    def env_value(self, v):
+    def process_value(self, v):
         if isinstance(v, str):
-            return Template(v).safe_substitute(**os.environ)
+            v = Template(v).safe_substitute(**os.environ)
+            v = self.load_file(v)
+        return v
+
+    def load_file(self, v):
+        if isinstance(v, str) and v[:6] == '{file}':
+            workdir = self.get('_workdir', '')
+            v = load_yaml(os.path.join(workdir, v[6:]))
+            if isinstance(v, dict):
+                v = ObjectDict(v)
         return v
 
     def path(self, path, dflt=None):
@@ -28,6 +48,7 @@ class ObjectDict(dict):
         src = self
         for idx, p in enumerate(parts[:-1]):
             src = src.get(p)
+            src = self.process_value(src)
             if src is None:
                 break
             if not isinstance(src, dict):
@@ -41,7 +62,7 @@ class ObjectDict(dict):
         v = src and src.get(parts[-1], dflt)
         if isinstance(v, dict):
             v = ObjectDict(v)
-        return self.env_value(dflt if v is None else v)
+        return self.process_value(dflt if v is None else v)
 
 
 class OrderedObjectDict(OrderedDict, ObjectDict):
