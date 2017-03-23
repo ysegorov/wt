@@ -1,6 +1,12 @@
 # Changelog
 
 
+
+## 0.4.0 (?)
+
+- [+] #23 yaml configuration can be splitted into multiple files
+
+
 ## 0.3.1 (2017-03-21)
 
 - [\*] minor fix for pypi targeted readme translation from md to rst

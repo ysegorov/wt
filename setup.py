@@ -38,12 +38,13 @@ classifiers = [
     #   3 - Alpha
     #   4 - Beta
     #   5 - Production/Stable
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
     'Topic :: Software Development :: Build Tools',
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
 ]
 
 setup(

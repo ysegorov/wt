@@ -14,7 +14,8 @@ Pretty small and simplified static blog generator with following features:
 - [atom][atom] for feed
 - [aiohttp][aiohttp] for development server
 - only two types of content - **page** and **post**
-- content metadata lives in configuration file
+- content metadata lives in configuration file, configuration file can splitted
+  into multiple nested files
 - have sensible defaults for content sources
 - no python coding needed to work with
 
