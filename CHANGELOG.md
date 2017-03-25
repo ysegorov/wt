@@ -5,6 +5,7 @@
 ## 0.4.0 (?)
 
 - [+] #23 yaml configuration can be splitted into multiple files
+- [*] #25 [!] `wt.base` module refactored, module api breakage
 
 
 ## 0.3.1 (2017-03-21)
