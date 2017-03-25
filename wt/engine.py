@@ -27,6 +27,8 @@ class WT(object):
         self.logger = logging.getLogger('wt.blog')
         self.is_prod = is_prod
 
+        os.environ.setdefault('WT_WORKDIR', self.workdir)
+
         conf = None
         if os.path.isfile(filename):
             with open(filename, encoding='utf-8') as f:
@@ -39,31 +41,49 @@ class WT(object):
         else:
             self.logger.warn('Missing config file "%s"', filename)
 
-        self.conf = Config(conf or {})
-        self.conf._workdir = self.workdir
+        self.conf = Config(**(conf or {}))
+
+    def conf_value(self, name, dflt=None):
+        path = name.split('.')
+        v = self.conf
+        try:
+            for part in path:
+                v = getattr(v, part)
+        except AttributeError:
+            v = None
+        return v in (self.conf, None) and dflt or v
 
     @cached_property
     def static_root(self):
-        static_root = self.conf.path('directories.static', 'static')
+        try:
+            static_root = self.conf.directories.static
+        except AttributeError:
+            static_root = 'static'
         return os.path.join(self.workdir, static_root)
 
     @cached_property
     def with_feed(self):
-        return self.conf.path('build.feed', True)
+        try:
+            return self.conf.build.feed
+        except AttributeError:
+            return True
 
     @cached_property
     def verify_links(self):
-        return self.conf.path('verify.links', False)
+        try:
+            return self.conf.verify.links
+        except AttributeError:
+            return False
 
     @cached_property
     def pages(self):
         pages = self.conf.pages or []
-        return {x['url']: Page.from_dict(self.workdir, x) for x in pages}
+        return {x.url: Page.from_dict(self.workdir, x) for x in pages}
 
     @cached_property
     def posts(self):
         posts = self.conf.posts or []
-        posts.sort(key=lambda x: x['modified'], reverse=True)
+        posts.sort(key=lambda x: x.modified, reverse=True)
         dst = OrderedDict()
         _prev = None
         for idx, post in enumerate(posts):
@@ -71,16 +91,16 @@ class WT(object):
             if idx > 0:
                 p.next = _prev
                 _prev.prev = p
-            dst[p['url']] = _prev = p
+            dst[p.url] = _prev = p
         return dst
 
     def paginator(self, path='/'):
         return Paginator(
-            list(self.posts.values()), path, **self.conf.path('paginate', {}))
+            list(self.posts.values()), path, **self.conf.paginate)
 
     @cached_property
     def env(self):
-        return get_env(self.workdir, **self.conf.path('jinja', {}))
+        return get_env(self.workdir, **self.conf.jinja)
 
     @cached_property
     def parser(self):
@@ -110,7 +130,7 @@ class WT(object):
         host = headers.get('Host')
         now = datetime.datetime.utcnow()
         if path.endswith('atom.xml') and self.with_feed:
-            tmpl = self.conf.path('templates.feed', 'atom.xml')
+            tmpl = self.conf_value('templates.feed', 'atom.xml')
             return self.render_html(tmpl,
                                     wt=self,
                                     config=self.conf,
@@ -122,7 +142,7 @@ class WT(object):
         elif path in self.pages:
             page = self.pages[path]
             tmpl = (
-                page.template or self.conf.path('templates.page', 'page.html'))
+                page.template or self.conf_value('templates.page', 'page.html'))
             return self.render_html(tmpl,
                                     wt=self,
                                     now=now,
@@ -132,7 +152,7 @@ class WT(object):
         elif path in self.posts:
             post = self.posts[path]
             tmpl = (
-                post.template or self.conf.path('templates.post', 'post.html'))
+                post.template or self.conf_value('templates.post', 'post.html'))
             return self.render_html(tmpl,
                                     wt=self,
                                     now=now,
@@ -140,7 +160,7 @@ class WT(object):
                                     content=post,
                                     config=self.conf)
 
-        tmpl = self.conf.path('templates.mainpage', 'mainpage.html')
+        tmpl = self.conf_value('templates.mainpage', 'mainpage.html')
         posts = list(self.posts.values())
         paginator = self.paginator(path)
         if path == '/' or path in paginator.pages:
@@ -158,13 +178,20 @@ class WT(object):
 
     @cached_property
     def output_path(self):
-        output = Path(self.conf.path('build.output', 'output'))
+        try:
+            output = self.conf.build.output
+        except AttributeError:
+            output = 'output'
+        output = Path(output)
         if not output.is_absolute():
             output = Path(self.workdir).joinpath(output)
         return output.expanduser()
 
     def build(self):
-        build_static = bool(self.conf.path('build.static', False))
+        try:
+            build_static = self.conf.build.static
+        except AttributeError:
+            build_static = False
         output = self.output_path
         self.logger.info('Building pages to %s directory', str(output))
         if output.exists():

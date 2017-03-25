@@ -223,10 +223,9 @@ def sample_blog__build__has_static_copied(sample_blog):
     assert os.path.exists(os.path.join(output, 'css', 'style.css'))
 
 
-def sample_blog__build_without_static__doesnt_have_static_copied(sample_blog):
-    sample_blog.conf.build['static'] = False
-    sample_blog.build()
-    output = str(sample_blog.output_path)
+def sample_blog_without_static__doesnt_have_static_copied(sample_blog_without_static):
+    sample_blog_without_static.build()
+    output = str(sample_blog_without_static.output_path)
     assert not os.path.exists(os.path.join(output, 'css', 'style.css'))
 
 

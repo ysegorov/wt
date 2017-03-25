@@ -76,12 +76,14 @@ setup(
             'pytest-cov>=2.3.1',
             'pytest-catchlog>=1.2.2',
             'pytest-aiohttp>=0.1.3',
+            'pytest-describe>=0.11.0',
         ]
     },
     setup_requires=['pytest-runner>=2.0,<3dev'],
     tests_require=['pytest>=3.0.0',
                    'pytest-catchlog>=1.2.2',
-                   'pytest-aiohttp>=0.1.3'],
+                   'pytest-aiohttp>=0.1.3',
+                   'pytest-describe>=0.11.0'],
     entry_points={
         'console_scripts': [
             'wt=wt.cli:main'

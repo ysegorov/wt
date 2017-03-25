@@ -3,7 +3,6 @@
 import os
 import logging
 
-from collections import OrderedDict
 from string import Template
 
 import yaml
@@ -21,65 +20,65 @@ def load_yaml(filename):
     return data[0] if len(data) == 1 else data
 
 
-class ObjectDict(dict):
-
-    def __getattr__(self, name, default=None):
-        return self.process_value(self.get(name, default))
-
-    def __setattr__(self, name, value):
-        self[name] = value
-
-    def process_value(self, v):
-        if isinstance(v, str):
-            v = Template(v).safe_substitute(**os.environ)
-            v = self.load_file(v)
-        return v
-
-    def load_file(self, v):
-        if isinstance(v, str) and v[:6] == '{file}':
-            workdir = self.get('_workdir', '')
-            v = load_yaml(os.path.join(workdir, v[6:]))
-            if isinstance(v, dict):
-                v = ObjectDict(v)
-        return v
-
-    def path(self, path, dflt=None):
-        parts = path.split('.')
-        src = self
-        for idx, p in enumerate(parts[:-1]):
-            src = src.get(p)
-            src = self.process_value(src)
-            if src is None:
-                break
-            if not isinstance(src, dict):
-                msg = ('Expecting %s instance to have value for "%s"'
-                       ' but "%s" found at "%s" instead of nested dict'
-                       % (type(self).__name__,
-                          path,
-                          str(src),
-                          '.'.join(parts[:idx + 1])))
-                raise ValueError(msg)
-        v = src and src.get(parts[-1], dflt)
-        if isinstance(v, dict):
-            v = ObjectDict(v)
-        return self.process_value(dflt if v is None else v)
+def transform(value):
+    conv = {
+        list: process_list,
+        dict: dict_to_object,
+        str: lambda x: process_str_file(process_str_env(x)),
+    }
+    return conv.get(type(value), lambda x: x)(value)
 
 
-class OrderedObjectDict(OrderedDict, ObjectDict):
-    pass
+def dict_to_object(obj):
+    return Object(**obj)
 
 
-class Config(ObjectDict):
-    pass
+def process_list(obj):
+    return [isinstance(x, dict) and Object(**x) or x for x in obj]
 
 
-class Content(ObjectDict):
+def process_str_env(value):
+    return Template(value).safe_substitute(**os.environ)
+
+
+def process_str_file(value):
+    if value[:6] == '{file}':
+        workdir = os.environ.get('WT_WORKDIR', '')
+        v = load_yaml(os.path.join(workdir, value[6:]))
+        return transform(v)
+    return value
+
+
+class Object(object):
+
+    __slots__ = ('_kwargs', )
+
+    def __init__(self, **kwargs):
+        self._kwargs = kwargs
+
+    def __getattr__(self, name):
+        return transform(self._kwargs.get(name))
+
+
+class Config(Object):
+
+    def __getattr__(self, name):
+        if name in ('paginate', 'jinja'):
+            return self._kwargs.get(name, {})
+        return super().__getattr__(name)
+
+
+class Content(Object):
+
     content_dirname = 'content'
     data_dirname = None
 
     @classmethod
     def from_dict(cls, workdir, data):
-        p = cls(data)
+        if isinstance(data, dict):
+            data = dict_to_object(data)
+        assert isinstance(data, Object)
+        p = cls(**data._kwargs)
         if p.src and not os.path.isabs(p.src):
             p.src = os.path.join(workdir,
                                  cls.content_dirname,

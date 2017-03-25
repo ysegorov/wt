@@ -6,7 +6,7 @@ import string
 import pytest
 import yaml
 
-from wt.base import ObjectDict, OrderedObjectDict, Content, Post, Page
+from wt.base import Post, Page
 from wt.decorators import reloadable
 from wt.engine import WT
 from wt.paginator import Paginator
@@ -31,73 +31,6 @@ def letters():
         return Paginator(L, href, **kwargs)
 
     return factory
-
-
-@pytest.fixture(scope='function',
-                params=[{'foo': 12}, {'foo': object()}, {'foo': True}],
-                ids=['int', 'object', 'bool'])
-def object_dict(request):
-    return ObjectDict(**request.param)
-
-
-@pytest.fixture(scope='function',
-                params=[{'foo': {'bar': {'baz': 12}}}],
-                ids=['foo-bar-baz'])
-def nested_object_dict(request):
-    return ObjectDict(**request.param)
-
-
-@pytest.fixture(scope='function')
-def ordered_object_dict():
-    return OrderedObjectDict((('foo', 12), ('bar', 'yes'), ('baz', True)))
-
-
-@pytest.fixture(scope='function')
-def object_dict_with_env():
-    return ObjectDict({
-        'foo': '${URL1}',
-        'bar': {
-            'baz': '${URL2}'
-        },
-        'boo': '${HOST}',
-    })
-
-
-@pytest.fixture(scope='function')
-def content(tmpdir):
-    fn = tmpdir.mkdir('content').join('foo.md')
-    fn.write('bar')
-    data = {
-        'src': 'foo.md'
-    }
-    return Content.from_dict(str(tmpdir), data)
-
-
-@pytest.fixture(scope='function')
-def content_without_src(tmpdir):
-    return Content.from_dict(str(tmpdir), {})
-
-
-@pytest.fixture(scope='function')
-def post(tmpdir):
-    fn = tmpdir.mkdir('content').mkdir('posts').join('lorem.md')
-    fn.write('ipsum')
-    data = {
-        'src': 'lorem.md',
-        'url': '/lorem/'
-    }
-    return Post.from_dict(str(tmpdir), data)
-
-
-@pytest.fixture(scope='function')
-def page(tmpdir):
-    fn = tmpdir.mkdir('content').mkdir('pages').join('ipsum.md')
-    fn.write('lorem')
-    data = {
-        'src': 'ipsum.md',
-        'url': '/ipsum/'
-    }
-    return Page.from_dict(str(tmpdir), data)
 
 
 @pytest.fixture(scope='function')
@@ -153,47 +86,16 @@ def sample_blog(tmpdir):
     return WT(str(tmpdir.join('wt.yaml')))
 
 
-CONF_PAGES = """\
----
-title: Item 1
----
-title: Item 2
----
-title: Item 3
-...
-"""
-CONF_TEXT = """\
----
-mainpage:
-    title: mainpage title
-    text: mainpage text
-foo: some text
-bar:
-    baz: 12
-...
-"""
-
-
 @pytest.fixture(scope='function')
-def conf_with_nested_file(tmpdir):
-    pages = tmpdir.join('pages.yaml')
-    pages.write_text(CONF_PAGES, 'utf-8')
-    text = tmpdir.join('text.yaml')
-    text.write_text(CONF_TEXT, 'utf-8')
-
-    def factory(workdir=True):
-        data = {
-            'title': 'Hello',
-            'pages': '{file}pages.yaml',
-            'data': {
-                'text': '{file}text.yaml'
-            }
-        }
-        if workdir:
-            data['_workdir'] = str(tmpdir)
-        return ObjectDict(data)
-
-    return factory
+def sample_blog_without_static(tmpdir):
+    init(str(tmpdir))
+    fn = str(tmpdir.join('wt.yaml'))
+    with open(fn, encoding='utf-8') as f:
+        conf = yaml.load(f)
+    conf['build']['static'] = False
+    with open(fn, 'w') as f:
+        yaml.dump(conf, f)
+    return WT(str(tmpdir.join('wt.yaml')))
 
 
 BROKEN_CONTENT = """\

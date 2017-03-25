@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 {%- set server_url = 'http://' + host if host else config.url %}
-{%- set feed_domain = config.path('feed.domain', 'example.com') %}
+{%- set feed_domain = wt.conf_value('feed.domain', 'example.com') %}
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ config.lang or 'en' }}">
     <title>{{ config.title }}</title>
     <subtitle>{{ config.subtitle }}</subtitle>
