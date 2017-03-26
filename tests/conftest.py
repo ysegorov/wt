@@ -1,36 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import string
 
 import pytest
 import yaml
 
-from wt.base import Post, Page
-from wt.decorators import reloadable
 from wt.engine import WT
-from wt.paginator import Paginator
 from wt.utils import init
-from wt import server
-
-
-L = string.ascii_lowercase
-
-
-@pytest.fixture
-def ascii():
-    return L
-
-
-@pytest.fixture(scope='function')
-def letters():
-
-    def factory(href='/', **kwargs):
-        kwargs.setdefault('page_size', 5)
-        kwargs.setdefault('orphans', 2)
-        return Paginator(L, href, **kwargs)
-
-    return factory
 
 
 @pytest.fixture(scope='function')
@@ -74,13 +50,6 @@ def empty_blog(tmpdir):
 
 
 @pytest.fixture(scope='function')
-def sample_wt_path(tmpdir):
-    p = str(tmpdir)
-    init(p)
-    return p
-
-
-@pytest.fixture(scope='function')
 def sample_blog(tmpdir):
     init(str(tmpdir))
     return WT(str(tmpdir.join('wt.yaml')))
@@ -95,22 +64,6 @@ def sample_blog_without_static(tmpdir):
     conf['build']['static'] = False
     with open(fn, 'w') as f:
         yaml.dump(conf, f)
-    return WT(str(tmpdir.join('wt.yaml')))
-
-
-BROKEN_CONTENT = """\
-{% extends "base.html" %}
-{% block content %}
-{{ contet.text|markdown }}
-{% endblock %}
-"""
-
-
-@pytest.fixture(scope='function')
-def broken_sample_blog(tmpdir):
-    init(str(tmpdir))
-    mainpage = tmpdir.join('templates', 'content.html')
-    mainpage.write(BROKEN_CONTENT)
     return WT(str(tmpdir.join('wt.yaml')))
 
 
@@ -193,44 +146,5 @@ def paged_blog_factory(tmpdir):
         mainpage = tmpdir.join('templates', 'mainpage.html')
         mainpage.write(MAINPAGE_PAGED)
         return WT(fn)
-
-    return factory
-
-
-@pytest.fixture(scope='function')
-def reloadable_factory():
-
-    def factory():
-        buf = []
-
-        @reloadable('foo')
-        def load(filename):
-            buf.append(1)
-            try:
-                with open(filename, 'rt') as f:
-                    return f.read()
-            except FileNotFoundError:
-                return -1
-
-        return buf, load
-
-    return factory
-
-
-@pytest.fixture(scope='function')
-def server_app_factory(sample_blog):
-
-    def factory(loop):
-        return server.aiohttp_app(sample_blog.config_filename, loop=loop)
-
-    return factory
-
-
-@pytest.fixture(scope='function')
-def broken_server_app_factory(broken_sample_blog):
-
-    def factory(loop):
-        return server.aiohttp_app(
-            broken_sample_blog.config_filename, loop=loop)
 
     return factory
