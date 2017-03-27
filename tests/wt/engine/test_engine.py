@@ -37,6 +37,7 @@ def describe_WT():
             os.path.join(blog.static_root, 'css', 'style.css'))
 
         blog.build()
+        output_path = str(blog.output_path)
 
         for parts in [('index.html', ),
                       ('atom.xml', ),
@@ -44,7 +45,7 @@ def describe_WT():
                       ('bar', 'index.html'),
                       ('baz', 'index.html'),
                       ('css', 'style.css')]:
-            assert os.path.exists(os.path.join(blog.output_path, *parts))
+            assert os.path.exists(os.path.join(output_path, *parts))
 
     def must_properly_handle_blog_rebuild(blog):
         blog.build()
@@ -57,8 +58,9 @@ def describe_WT():
 
     def must_properly_handle_blog_without_static_build(blog_without_static):
         blog_without_static.build()
+        output_path = str(blog_without_static.output_path)
         assert not os.path.exists(
-            os.path.join(blog_without_static.output_path, 'css', 'style.css'))
+            os.path.join(output_path, 'css', 'style.css'))
 
     def must_properly_handle_blog_with_bad_link(blog_with_bad_link_factory,
                                                 caplog):
