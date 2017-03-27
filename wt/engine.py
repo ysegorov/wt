@@ -34,10 +34,15 @@ class WT(object):
             with open(filename, encoding='utf-8') as f:
                 try:
                     conf = yaml.load(f)
-                    assert isinstance(conf, dict)
-                except (yaml.YAMLError, AssertionError):
+                except yaml.YAMLError:
                     conf = {}
                     self.logger.error('Error parsing yaml', exc_info=True)
+                else:
+                    if not isinstance(conf, dict):
+                        self.logger.error(
+                            'Loaded config expected to be a dict,'
+                            ' got "%s" instead', type(conf).__name__)
+                        conf = {}
         else:
             self.logger.warn('Missing config file "%s"', filename)
 
@@ -55,25 +60,16 @@ class WT(object):
 
     @cached_property
     def static_root(self):
-        try:
-            static_root = self.conf.directories.static
-        except AttributeError:
-            static_root = 'static'
+        static_root = self.conf_value('directories.static', 'static')
         return os.path.join(self.workdir, static_root)
 
     @cached_property
     def with_feed(self):
-        try:
-            return self.conf.build.feed
-        except AttributeError:
-            return True
+        return self.conf_value('build.feed', True)
 
     @cached_property
     def verify_links(self):
-        try:
-            return self.conf.verify.links
-        except AttributeError:
-            return False
+        return self.conf_value('verify.links', False)
 
     @cached_property
     def pages(self):
@@ -141,8 +137,8 @@ class WT(object):
                                     pages=self.pages.values())
         elif path in self.pages:
             page = self.pages[path]
-            tmpl = (
-                page.template or self.conf_value('templates.page', 'page.html'))
+            tmpl = (page.template or
+                    self.conf_value('templates.page', 'page.html'))
             return self.render_html(tmpl,
                                     wt=self,
                                     now=now,
@@ -151,8 +147,8 @@ class WT(object):
                                     config=self.conf)
         elif path in self.posts:
             post = self.posts[path]
-            tmpl = (
-                post.template or self.conf_value('templates.post', 'post.html'))
+            tmpl = (post.template or
+                    self.conf_value('templates.post', 'post.html'))
             return self.render_html(tmpl,
                                     wt=self,
                                     now=now,
@@ -178,20 +174,14 @@ class WT(object):
 
     @cached_property
     def output_path(self):
-        try:
-            output = self.conf.build.output
-        except AttributeError:
-            output = 'output'
+        output = self.conf_value('build.output', 'output')
         output = Path(output)
         if not output.is_absolute():
             output = Path(self.workdir).joinpath(output)
         return output.expanduser()
 
     def build(self):
-        try:
-            build_static = self.conf.build.static
-        except AttributeError:
-            build_static = False
+        build_static = self.conf_value('build.static', False)
         output = self.output_path
         self.logger.info('Building pages to %s directory', str(output))
         if output.exists():

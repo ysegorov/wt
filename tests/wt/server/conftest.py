@@ -7,6 +7,12 @@ from wt.utils import init
 from wt import server
 
 
+@pytest.fixture(scope='function')
+def sample_blog(tmpdir):
+    init(str(tmpdir))
+    return WT(str(tmpdir.join('wt.yaml')))
+
+
 BROKEN_CONTENT = """\
 {% extends "base.html" %}
 {% block content %}
