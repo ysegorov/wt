@@ -7,6 +7,7 @@
 - [+] #23 yaml configuration can be splitted into multiple files
 - [\*] #24 tests rewritten using pytest-describe plugin
 - [\*] #25 [!] `wt.base` module refactored, module api breakage
+- [+] wt logo
 
 
 ## 0.3.1 (2017-03-21)

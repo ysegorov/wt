@@ -1,5 +1,6 @@
-# **wt** - static blog generator
+# wt - static blog generator
 
+![Logo](misc/logo96.png)
 
 [![Build Status](https://travis-ci.org/ysegorov/wt.svg?branch=master)](https://travis-ci.org/ysegorov/wt)
 
