@@ -2,7 +2,7 @@
 
 
 
-## 0.4.0 (?)
+## 0.4.0 (2017-03-28)
 
 - [+] #23 yaml configuration can be splitted into multiple files
 - [\*] #24 tests rewritten using pytest-describe plugin
