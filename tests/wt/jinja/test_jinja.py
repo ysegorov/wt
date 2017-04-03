@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from unittest import mock
+
 import jinja2
+import pytest
+
+from wt import jinja
 
 
 def describe_Registry():
@@ -14,6 +19,46 @@ def describe_Registry():
 
         res = jinja_registry.add(fltr)
         assert res is fltr
+        assert fltr in jinja_registry
+
+    def must_raise_value_error_if_filter_has_no_name(tmpdir):
+        with mock.patch('wt.jinja.filters', jinja.Registry()):
+
+            class Fltr(object):
+
+                def __call__(self, text):
+                    return text
+
+            jinja.filters.add(Fltr())
+
+            with pytest.raises(ValueError):
+                jinja.get_env(str(tmpdir))
+
+    def must_raise_value_error_if_function_has_no_name(tmpdir):
+        with mock.patch('wt.jinja.functions', jinja.Registry()):
+
+            class Function(object):
+
+                def __call__(self, text):
+                    return text
+
+            jinja.functions.add(Function())
+
+            with pytest.raises(ValueError):
+                jinja.get_env(str(tmpdir))
+
+    def must_properly_register_class_based_filter(jinja_registry):
+
+        class Fltr(object):
+            filter_name = 'class_based_filter'
+
+            def __call__(self, text):
+                return text
+
+        fltr = Fltr()
+
+        res = jinja_registry.add(fltr)
+        assert isinstance(res, Fltr)
         assert fltr in jinja_registry
 
 

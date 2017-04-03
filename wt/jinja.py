@@ -41,10 +41,20 @@ def get_env(workdir, **config):
         pass
 
     for fn in filters:
-        env.filters[getattr(fn, 'filter_name', fn.__name__)] = fn
+        if not hasattr(fn, 'filter_name') and not hasattr(fn, '__name__'):
+            raise ValueError(
+                'Registered jinja filter must be a function '
+                'or must have "filter_name" attribute')
+        env.filters[getattr(fn, 'filter_name',
+                            getattr(fn, '__name__', 'fltr'))] = fn
 
     for fn in functions:
-        env.globals[getattr(fn, 'function_name', fn.__name__)] = fn
+        if not hasattr(fn, 'function_name') and not hasattr(fn, '__name__'):
+            raise ValueError(
+                'Registered jinja function must be a real function '
+                'or must have "function_name" attribute')
+        env.globals[getattr(fn, 'function_name',
+                            getattr(fn, '__name__', 'func'))] = fn
 
     if 'markdown' not in env.filters:
 
