@@ -4,6 +4,7 @@
 ## 0.5.0 (?)
 
 - [+] #27 allow class-based filters and function for jinja customization
+- [+] #1 wt documentation is [online](https://ysegorov.github.io/wt-docs/)
 
 
 ## 0.4.0 (2017-03-28)
