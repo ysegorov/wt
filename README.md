@@ -78,7 +78,7 @@ $ wt build
 
 ## Roadmap
 
-- [ ] documentation
+- [x] ~~documentation~~
 - [x] ~~posts list pagination~~
 - [ ] support for tags
 
