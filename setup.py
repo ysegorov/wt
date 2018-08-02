@@ -24,16 +24,6 @@ def find_version(*file_paths):
     raise RuntimeError('Unable to find version string.')
 
 
-def md_to_rst(text):
-    try:
-        import pypandoc
-    except ImportError:
-        pass
-    else:
-        text = pypandoc.convert_text(text, 'rst', 'markdown_github')
-    return text
-
-
 classifiers = [
     #   3 - Alpha
     #   4 - Beta
@@ -51,7 +41,8 @@ setup(
     name='wt',
     version=find_version('wt', '__init__.py'),
     description='Static blog generator',
-    long_description=md_to_rst(read('README.md')),
+    long_description=read('README.md'),
+    long_description_content_type='text/markdown',
     url='https://github.com/ysegorov/wt',
     author='Yuri Egorov',
     author_email='ysegorov@gmail.com',

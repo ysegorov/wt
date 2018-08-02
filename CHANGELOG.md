@@ -1,6 +1,11 @@
 # Changelog
 
 
+## 0.5.1 (2018-08-02)
+
+- [\*] minor fix for pypi targeted readme in markdown format
+
+
 ## 0.5.0 (2018-08-02)
 
 - [\*] #29 switch to `http.server.HTTPServer` as a development http server
