@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 0.5.0 (?)
+## 0.5.0 (2018-08-02)
 
 - [\*] #29 switch to `http.server.HTTPServer` as a development http server
 - [+] #27 allow class-based filters and function for jinja customization
