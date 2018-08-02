@@ -65,7 +65,6 @@ setup(
         'markdown>=2.6.6',
         'jinja2>=2.8',
         'pyyaml>=3.12',
-        'aiohttp~=0.22.5',
         'cached-property>=1.3.0',
     ],
     extras_require={
@@ -75,14 +74,12 @@ setup(
             'pytest>=3.0.0',
             'pytest-cov>=2.3.1',
             'pytest-catchlog>=1.2.2',
-            'pytest-aiohttp>=0.1.3',
             'pytest-describe>=0.11.0',
         ]
     },
     setup_requires=['pytest-runner>=2.0,<3dev'],
     tests_require=['pytest>=3.0.0',
                    'pytest-catchlog>=1.2.2',
-                   'pytest-aiohttp>=0.1.3',
                    'pytest-describe>=0.11.0'],
     entry_points={
         'console_scripts': [

@@ -10,10 +10,8 @@ import time
 import subprocess
 import string
 import traceback
-import urllib.parse
-from pathlib import Path
-
-from aiohttp import web, FileSender
+from http import HTTPStatus
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 from .exceptions import UrlNotFoundError
 from . import utils
@@ -35,47 +33,62 @@ SERVER_ERROR = string.Template(
 )
 
 
-async def aiohttp_handler(request):
-    config = request.app['config']
-    engine = utils.engine(config)
-    try:
-        content = engine.render(request.path, request.headers)
-    except UrlNotFoundError:
-        sender = FileSender()
-        path = urllib.parse.urldefrag(request.path)[0]
-        path = path.split('?', 1)[0]
-        path = urllib.parse.unquote(path)
-        path = os.path.normpath(path)
-        path = filter(None, path.split('/'))
-        filename = os.path.join(engine.static_root, *path)
+class Server(HTTPServer):  # pragma: no cover
+
+    def __init__(self, config, *args, **kwargs):
+        self.engine = utils.engine(config)
+        os.chdir(self.engine.static_root)
+        super().__init__(*args, **kwargs)
+
+
+class Handler(SimpleHTTPRequestHandler):  # pragma: no cover
+
+    def do_GET(self):
+        engine = self.server.engine
         try:
-            ret = await sender.send(request, Path(filename))
-            return ret
-        except FileNotFoundError as err:
-            content = engine.render_html('404.html', request=request)
-            return web.Response(
-                status=404, text=content, content_type='text/html')
-    except Exception as exc:
-        logger.error('Error rendering page', exc_info=True)
-        content = traceback.format_exc()
-        return web.Response(
-            status=500,
-            text=SERVER_ERROR.substitute(error=content, title=str(exc)),
-            content_type='text/html')
-    ct = {
-        '.xml': 'text/xml',
-        '.txt': 'text/plain'
-    }
-    ct = ct.get(request.path[-4:].lower(), 'text/html')
-    return web.Response(text=content, content_type=ct)
+            try:
+                content = engine.render(self.path, self.headers)
+            except UrlNotFoundError:
+                super().do_GET()
+            else:
+                self.send_content(HTTPStatus.OK, content)
+        except Exception as exc:
+            logger.error('Error rendering page', exc_info=True)
+            content = traceback.format_exc()
+            content = SERVER_ERROR.substitute(error=content, title=str(exc))
+            self.send_content(HTTPStatus.INTERNAL_SERVER_ERROR, content)
 
+    def send_error(self, code, message=None, explain=None):
+        if code == HTTPStatus.NOT_FOUND:
+            engine = self.server.engine
+            content = engine.render_html('404.html')
+            self.send_content(code, content)
+        else:
+            super().send_error(code, message=message, explain=explain)
 
-def aiohttp_app(config, loop=None):
-    app = web.Application(logger=logger, loop=loop)
-    app.router.add_route('GET', '/', aiohttp_handler)
-    app.router.add_route('GET', '/{p:.*}', aiohttp_handler)
-    app['config'] = config
-    return app
+    def send_content(self, code, content):
+        content = content.encode('utf-8')
+        size = len(content)
+
+        path = self.path.split('?')[0]
+        path = path.split('#')[0]
+        base, ext = os.path.splitext(path)
+        ct = {
+            '.xml': 'text/xml',
+            '.txt': 'text/plain'
+        }
+        ct = ct.get(ext.lower(), 'text/html')
+        ct += ';charset=utf-8'
+
+        self.log_request(code=code, size=size)
+        self.send_response_only(code)
+        self.send_header('Server', self.version_string())
+        self.send_header('Date', self.date_time_string())
+        self.send_header('Content-Type', ct)
+        self.send_header('Content-Length', size)
+        self.send_header('Last-Modified', self.date_time_string())
+        self.end_headers()
+        self.wfile.write(content)
 
 
 def code_changed(workdir):  # pragma: no cover
@@ -109,15 +122,17 @@ def server(config, host, port):  # pragma: no cover
     logger = logging.getLogger('wt.server')
 
     if os.environ.get('IS_WT_CHILD') == 'yes':
-        app = aiohttp_app(config)
+        address = (host, port)
+        httpd = Server(config, address, Handler)
         logger.debug('Server started at %s:%s...', host, port)
-        return web.run_app(app, host=host, port=port)
+        httpd.serve_forever()
 
     checker = code_changed(os.path.dirname(config))
 
     def run():
         env = os.environ.copy()
         env['IS_WT_CHILD'] = 'yes'
+        env['PYTHONUNBUFFERED'] = 'yes'
         p = subprocess.Popen(sys.argv[:],
                              env=env,
                              universal_newlines=True,
