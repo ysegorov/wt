@@ -3,6 +3,7 @@
 
 ## 0.5.0 (?)
 
+- [\*] #29 switch to `http.server.HTTPServer` as a development http server
 - [+] #27 allow class-based filters and function for jinja customization
 - [+] #1 wt documentation is [online](https://ysegorov.github.io/wt-docs/)
 

@@ -13,7 +13,7 @@ Pretty small and simplified static blog generator with following features:
 - [yaml][yaml] for configuration
 - [jinja2][jinja2] for templating
 - [atom][atom] for feed
-- [aiohttp][aiohttp] for development server
+- python's standard library `HTTPServer` as a development http server
 - only two types of content - **page** and **post**
 - content metadata lives in configuration file, configuration file can be
   splitted into multiple nested files
@@ -92,6 +92,5 @@ MIT
 [yaml]: http://yaml.org/
 [jinja2]: http://jinja.pocoo.org/
 [atom]: https://en.wikipedia.org/wiki/Atom_(standard)
-[aiohttp]: http://aiohttp.readthedocs.io/en/stable/
 [pelican]: http://docs.getpelican.com/
 [grow]: https://grow.io/
