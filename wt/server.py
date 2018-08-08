@@ -100,6 +100,8 @@ def code_changed(workdir):  # pragma: no cover
         files = glob.iglob(os.path.join(workdir, '**', '*.py'), recursive=True)
         changed = False
         for fn in itertools.chain(wtfiles, files):
+            if not os.path.exists(fn):
+                continue
             _mtime = os.stat(fn).st_mtime
             if _mtime > mtime:
                 mtime = _mtime
