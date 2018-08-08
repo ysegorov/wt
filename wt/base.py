@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import logging
 
 from string import Template
@@ -11,6 +12,7 @@ from .decorators import reloadable
 
 
 logger = logging.getLogger('wt.base')
+fm_re = re.compile(r'^---$', re.MULTILINE)
 
 
 @reloadable('(re)loading nested configuration...')
@@ -18,6 +20,18 @@ def load_yaml(filename):
     with open(filename, encoding='utf-8') as f:
         data = list(yaml.load_all(f))
     return data[0] if len(data) == 1 else data
+
+
+@reloadable('(re)loading content...')
+def load_content(filename):
+    fm, text = {}, ''
+    if os.path.isfile(filename):
+        with open(filename, 'rt', encoding='utf-8') as f:
+            text = f.read()
+        if len(fm_re.findall(text)) == 2:
+            _, fm, text = fm_re.split(text, maxsplit=2)
+            fm = yaml.safe_load(fm)
+    return (fm, text)
 
 
 def transform(value):
@@ -57,6 +71,8 @@ class Object(object):
         self._kwargs = kwargs
 
     def __getattr__(self, name):
+        if name in self.__slots__:
+            return super().__getattr__(name)
         return transform(self._kwargs.get(name))
 
 
@@ -70,31 +86,45 @@ class Config(Object):
 
 class Content(Object):
 
+    __slots__ = ('_kwargs', )
+
     content_dirname = 'content'
     data_dirname = None
 
+    def __init__(self, workdir, **kwargs):
+        if 'src' in kwargs:
+            if not os.path.isabs(kwargs['src']):
+                kwargs['src'] = os.path.join(workdir,
+                                             self.content_dirname,
+                                             self.data_dirname or '',
+                                             kwargs['src'])
+        super().__init__(**kwargs)
+
     @classmethod
     def from_dict(cls, workdir, data):
+        # FIXME do we really need dict_to_object call here?
         if isinstance(data, dict):
             data = dict_to_object(data)
         assert isinstance(data, Object)
-        p = cls(**data._kwargs)
-        if p.src and not os.path.isabs(p.src):
-            p.src = os.path.join(workdir,
-                                 cls.content_dirname,
-                                 cls.data_dirname or '',
-                                 p.src)
-        return p
+        return cls(workdir, **data._kwargs)
 
     @property
     def text(self):
-        t = ''
-        if self.src and os.path.isfile(self.src):
-            with open(self.src, 'rt', encoding='utf-8') as f:
-                t = f.read()
-        else:
-            logger.warn('  ! missing content file "%s"', self.src)
-        return t
+        txt = ''
+        if 'src' in self._kwargs:
+            src = self._kwargs['src']
+            _, txt = load_content(src)
+            if not txt:
+                logger.warn('  ! missing content file "%s"', src)
+        return txt
+
+    def __getattr__(self, name):
+        if 'src' in self._kwargs:
+            src = self._kwargs['src']
+            fm, _ = load_content(src)
+            if name in fm:
+                return fm[name]
+        return super().__getattr__(name)
 
 
 class Page(Content):
