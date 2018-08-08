@@ -1,6 +1,11 @@
 # Changelog
 
 
+## 1.0.0 (?)
+
+- [+] #30 add support for yaml-formatted content front matter
+
+
 ## 0.5.2 (2018-08-02)
 
 - [\*] package rebuild using latest wheel and twine to use readme in markdown
