@@ -1,6 +1,12 @@
 # Changelog
 
 
+## 0.5.2 (2018-08-02)
+
+- [\*] package rebuild using latest wheel and twine to use readme in markdown
+    format on pypi.org
+
+
 ## 0.5.1 (2018-08-02)
 
 - [\*] minor fix for pypi targeted readme in markdown format
