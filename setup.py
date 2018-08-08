@@ -35,6 +35,7 @@ classifiers = [
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
 ]
 
 setup(
@@ -64,13 +65,11 @@ setup(
             'coverage>=4.2',
             'pytest>=3.0.0',
             'pytest-cov>=2.3.1',
-            'pytest-catchlog>=1.2.2',
             'pytest-describe>=0.11.0',
         ]
     },
     setup_requires=['pytest-runner>=2.0,<3dev'],
     tests_require=['pytest>=3.0.0',
-                   'pytest-catchlog>=1.2.2',
                    'pytest-describe>=0.11.0'],
     entry_points={
         'console_scripts': [
