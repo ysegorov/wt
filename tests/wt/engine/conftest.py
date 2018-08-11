@@ -56,7 +56,7 @@ def blog_with_bad_link_factory(wt_factory, tmpdir):
     def factory(is_prod=False):
         init(str(tmpdir))
         foo = tmpdir.join('content', 'pages', 'foo.md')
-        foo.write('[bar](/bz/)')
+        foo.write('---\nurl: /foo/\n---\n[bar](/bz/)')
         return wt_factory(tmpdir.join('wt.yaml'), is_prod=is_prod)
 
     return factory
@@ -83,22 +83,26 @@ def paged_blog_factory(wt_factory, tmpdir):
 
     def factory(**paginate):
         init(str(tmpdir))
+        tmpdir.join('content', 'posts').remove(ignore_errors=True)
         fn = str(tmpdir.join('wt.yaml'))
         with open(fn, encoding='utf-8') as f:
             conf = yaml.load(f)
-        conf['posts'] = posts = []
         conf['paginate'] = paginate
-        now = datetime.datetime.now() - datetime.timedelta(days=24)
-        for x in range(23, 0, -1):
-            p = {
-                'src': 'bar.md' if x % 2 == 0 else 'baz.md',
-                'title': 'Post %02d' % x,
-                'url': '/post%02d/' % x,
-                'modified': (now + datetime.timedelta(days=x)).isoformat()
-            }
-            posts.append(p)
         with open(fn, 'w') as f:
             yaml.dump(conf, f)
+        now = datetime.datetime.now() - datetime.timedelta(days=24)
+        for x in range(23, 0, -1):
+            modified = (now + datetime.timedelta(days=x)).isoformat()
+            src = tmpdir.join('content', 'posts', 'post-%02d.md' % x)
+            text = [
+                '---',
+                'url: /post%02d/' % x,
+                'title: Post %02d' % x,
+                'modified: %s' % modified,
+                '---',
+                'bar' if x % 2 == 0 else 'baz',
+            ]
+            src.write('\n'.join(text), ensure=True)
 
         mainpage = tmpdir.join('templates', 'mainpage.html')
         mainpage.write(MAINPAGE_PAGED)

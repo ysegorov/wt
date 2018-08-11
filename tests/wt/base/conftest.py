@@ -4,7 +4,7 @@ import os
 
 import pytest
 
-from wt.base import dict_to_object, process_list, Config, Content, Page, Post
+from wt.base import dict_to_object, process_list, Config, Content
 
 
 @pytest.fixture(scope='function',
@@ -92,34 +92,35 @@ def config_factory():
 def content(tmpdir):
     fn = tmpdir.mkdir('content').join('foo.md')
     fn.write('bar')
-    data = {
-        'src': 'foo.md'
-    }
-    return Content.from_dict(str(tmpdir), data)
+    return Content(src=str(fn))
 
 
 @pytest.fixture(scope='function')
 def content_without_src(tmpdir):
-    return Content.from_dict(str(tmpdir), {})
+    return Content()
 
 
 @pytest.fixture(scope='function')
 def post(tmpdir):
     fn = tmpdir.mkdir('content').mkdir('posts').join('lorem.md')
-    fn.write('ipsum')
-    data = {
-        'src': 'lorem.md',
-        'url': '/lorem/'
-    }
-    return Post.from_dict(str(tmpdir), data)
+    text = '\n'.join([
+        '---',
+        'url: /lorem/',
+        '---',
+        'ipsum',
+    ])
+    fn.write(text)
+    return Content(src=str(fn))
 
 
 @pytest.fixture(scope='function')
 def page(tmpdir):
     fn = tmpdir.mkdir('content').mkdir('pages').join('ipsum.md')
-    fn.write('lorem')
-    data = {
-        'src': 'ipsum.md',
-        'url': '/ipsum/'
-    }
-    return Page.from_dict(str(tmpdir), data)
+    text = '\n'.join([
+        '---',
+        'url: /ipsum/',
+        '---',
+        'lorem',
+    ])
+    fn.write(text)
+    return Content(src=str(fn))
