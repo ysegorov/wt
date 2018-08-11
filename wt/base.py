@@ -2,6 +2,7 @@
 
 import os
 import re
+import datetime
 import logging
 
 from string import Template
@@ -86,37 +87,17 @@ class Config(Object):
 
 class Content(Object):
 
-    __slots__ = ('_kwargs', )
-
-    content_dirname = 'content'
-    data_dirname = None
-
-    def __init__(self, workdir, **kwargs):
-        if 'src' in kwargs:
-            if not os.path.isabs(kwargs['src']):
-                kwargs['src'] = os.path.join(workdir,
-                                             self.content_dirname,
-                                             self.data_dirname or '',
-                                             kwargs['src'])
-        super().__init__(**kwargs)
-
-    @classmethod
-    def from_dict(cls, workdir, data):
-        # FIXME do we really need dict_to_object call here?
-        if isinstance(data, dict):
-            data = dict_to_object(data)
-        assert isinstance(data, Object)
-        return cls(workdir, **data._kwargs)
+    __slots__ = ('_kwargs', 'next', 'prev')
 
     @property
     def text(self):
         txt = ''
-        if 'src' in self._kwargs:
-            src = self._kwargs['src']
+        src = self._kwargs.get('src')
+        if src is not None:
             _, txt = load_content(src)
-            if not txt:
-                logger.warn('  ! missing content file "%s"', src)
-        return txt
+        if not txt:
+            logger.warn('  ! missing content file "%s"', src)
+        return txt.strip()
 
     def __getattr__(self, name):
         if 'src' in self._kwargs:
@@ -124,12 +105,14 @@ class Content(Object):
             fm, _ = load_content(src)
             if name in fm:
                 return fm[name]
+            if name == 'modified':
+                return self.mtime
         return super().__getattr__(name)
 
-
-class Page(Content):
-    data_dirname = 'pages'
-
-
-class Post(Content):
-    data_dirname = 'posts'
+    @property
+    def mtime(self):
+        if 'src' in self._kwargs:
+            src = self._kwargs['src']
+            if os.path.exists(src):
+                mtime = os.stat(src).st_mtime
+                return datetime.datetime.fromtimestamp(mtime)

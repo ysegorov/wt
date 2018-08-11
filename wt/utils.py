@@ -8,6 +8,34 @@ from .decorators import reloadable
 from .engine import WT
 
 
+FOO_CONTENT = """
+---
+url: /foo/
+title: Foo page title
+modified: 2016-09-18T11:31:00+04:00
+---
+# Foo page title
+[bar](/bar/)"""
+
+BAR_CONTENT = """
+---
+url: /bar/
+title: Bar page title
+modified: 2016-09-18T20:10:00+04:00
+---
+# Bar post title
+[baz](/baz/)"""
+
+BAZ_CONTENT = """
+---
+url: /baz/
+title: Baz page title
+modified: 2016-09-20T20:10:00+04:00
+---
+# Baz post title
+[foo](/foo/)"""
+
+
 @reloadable('(re)loading configuration...')
 def engine(fn):  # pragma: no cover
     return WT(fn)
@@ -38,24 +66,24 @@ def init(path):
         (['templates', 'mainpage.html'], ['templates', 'mainpage.html']),
     )
 
-    for left, right in to_copy:
-        l = src.joinpath(*left)
-        r = dst.joinpath(*right)
-        if not l.exists():  # pragma: no cover
-            logger.warn('[!] missing file "%s", skipping', str(l))
+    for from_, to_ in to_copy:
+        left = src.joinpath(*from_)
+        right = dst.joinpath(*to_)
+        if not left.exists():  # pragma: no cover
+            logger.warn('[!] missing file "%s", skipping', str(left))
             continue
-        if r.exists():  # pragma: no cover
-            logger.warn('[!] target file "%s" exists, skipping', str(r))
+        if right.exists():  # pragma: no cover
+            logger.warn('[!] target file "%s" exists, skipping', str(right))
             continue
-        if not r.parent.exists():
-            r.parent.mkdir(parents=True)
-        copyfile(str(l), str(r))
-        logger.info('[+] "%s" created', str(r))
+        if not right.parent.exists():
+            right.parent.mkdir(parents=True)
+        copyfile(str(left), str(right))
+        logger.info('[+] "%s" created', str(right))
 
     to_create = (
-        (['content', 'pages', 'foo.md'], '# Foo page title\n[bar](/bar/)'),
-        (['content', 'posts', 'bar.md'], '# Bar post title\n[baz](/baz/)'),
-        (['content', 'posts', 'baz.md'], '# Baz post title\n[foo](/foo/)'),
+        (['content', 'pages', 'foo.md'], FOO_CONTENT),
+        (['content', 'posts', 'bar.md'], BAR_CONTENT),
+        (['content', 'posts', 'baz.md'], BAZ_CONTENT),
         (['static', 'css', 'style.css'], '/*styles*/\nbody {color: coral}'),
     )
     for parts, text in to_create:

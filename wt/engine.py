@@ -12,7 +12,7 @@ from shutil import copytree, rmtree
 import yaml
 from cached_property import cached_property
 
-from .base import Config, Page, Post
+from .base import Config, Content
 from .jinja import get_env
 from .exceptions import UrlNotFoundError, InvalidLocalLinkError
 from .paginator import Paginator
@@ -64,6 +64,18 @@ class WT(object):
         return os.path.join(self.workdir, static_root)
 
     @cached_property
+    def pages_root(self):
+        pages_root = self.conf_value('directories.pages',
+                                     os.path.join('content', 'pages'))
+        return os.path.join(self.workdir, pages_root)
+
+    @cached_property
+    def posts_root(self):
+        posts_root = self.conf_value('directories.posts',
+                                     os.path.join('content', 'posts'))
+        return os.path.join(self.workdir, posts_root)
+
+    @cached_property
     def with_feed(self):
         return self.conf_value('build.feed', True)
 
@@ -71,23 +83,30 @@ class WT(object):
     def verify_links(self):
         return self.conf_value('verify.links', False)
 
-    @cached_property
+    @property
     def pages(self):
-        pages = self.conf.pages or []
-        return {x.url: Page.from_dict(self.workdir, x) for x in pages}
+        pages_root, pages = self.pages_root, []
+        if os.path.isdir(pages_root):
+            pages = (Content(src=os.path.join(pages_root, x))
+                     for x in os.listdir(pages_root))
+        return {x.url: x for x in pages}
 
-    @cached_property
+    @property
     def posts(self):
-        posts = self.conf.posts or []
-        posts.sort(key=lambda x: x.modified, reverse=True)
+        posts_root, posts = self.posts_root, []
+        if os.path.isdir(posts_root):
+            posts = (Content(src=os.path.join(posts_root, x))
+                     for x in os.listdir(posts_root))
+        if self.is_prod:
+            posts = (x for x in posts if not x.draft)
+        posts = sorted(posts, key=lambda x: x.modified, reverse=True)
         dst = OrderedDict()
         _prev = None
         for idx, post in enumerate(posts):
-            p = Post.from_dict(self.workdir, post)
             if idx > 0:
-                p.next = _prev
-                _prev.prev = p
-            dst[p.url] = _prev = p
+                post.next = _prev
+                _prev.prev = post
+            dst[post.url] = _prev = post
         return dst
 
     def paginator(self, path='/'):
@@ -102,15 +121,16 @@ class WT(object):
     def parser(self):
         return HTMLParser()
 
-    @cached_property
+    @property
     def local_links(self):
+        pages, posts = self.pages.keys(), self.posts.keys()
         links = list(
             itertools.chain(
-                ['/'] if '/' not in self.pages else [],
+                ['/'] if '/' not in pages else [],
                 ['/atom.xml'] if self.with_feed else [],
                 (x for x in self.paginator().pages.keys() if x != '/'),
-                self.pages.keys(),
-                self.posts.keys(),
+                pages,
+                posts,
             ))
         return links
 
@@ -210,10 +230,12 @@ class WT(object):
         def is_local(parsed_link):
             return parsed_link.scheme == '' and parsed_link.netloc == ''
 
+        local_links = self.local_links
+
         for link in links:
             parsed = urllib.parse.urlparse(link)
             if is_local(parsed) and \
-               parsed.path not in self.local_links and \
+               parsed.path not in local_links and \
                not self.is_valid_static_link(parsed.path):
                 # FIXME show line numbers?
                 # this is generated html so line numbers might not be useful
