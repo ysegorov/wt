@@ -63,13 +63,13 @@ setup(
         'dev': [
             'twine>=1.8.1',
             'coverage>=4.2',
-            'pytest>=3.0.0',
+            'pytest>=3.7.0',
             'pytest-cov>=2.3.1',
             'pytest-describe>=0.11.0',
         ]
     },
     setup_requires=['pytest-runner>=2.0,<3dev'],
-    tests_require=['pytest>=3.0.0',
+    tests_require=['pytest>=3.7.0',
                    'pytest-describe>=0.11.0'],
     entry_points={
         'console_scripts': [
