@@ -4,6 +4,8 @@
 ## 1.0.0 (?)
 
 - [+] #30 add support for yaml-formatted content front matter
+- [\*] #31 drop support for hardcoded posts/pages configuration in `wt.yaml` in
+    favor of post/page front-matter
 
 
 ## 0.5.2 (2018-08-02)
