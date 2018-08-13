@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import datetime
 
 import pytest
 
@@ -83,9 +84,28 @@ def describe_config():
 
 def describe_content():
 
+    def must_have_proper_slots_defined(content):
+        allowed = ('_kwargs', 'next', 'prev')
+        disallowed = ('foo', 'baz', 'bar')
+
+        o = object()
+        for attr in allowed:
+            setattr(content, attr, o)
+            assert getattr(content, attr) is o
+
+        for attr in disallowed:
+            with pytest.raises(AttributeError):
+                setattr(content, attr, attr)
+
     def must_properly_load_text(content):
         assert os.path.isabs(content.src)
         assert content.text == 'bar'
+
+    def must_properly_load_front_matter(page):
+        assert page.url == '/ipsum/'
+
+    def must_return_file_mtime_if_no_modified_in_front_matter(page):
+        assert isinstance(page.modified, datetime.datetime)
 
     def must_properly_work_without_src(content_without_src):
         assert content_without_src.src is None

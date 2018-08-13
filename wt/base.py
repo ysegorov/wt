@@ -72,8 +72,6 @@ class Object(object):
         self._kwargs = kwargs
 
     def __getattr__(self, name):
-        if name in self.__slots__:
-            return super().__getattr__(name)
         return transform(self._kwargs.get(name))
 
 
@@ -87,7 +85,7 @@ class Config(Object):
 
 class Content(Object):
 
-    __slots__ = ('_kwargs', 'next', 'prev')
+    __slots__ = ('next', 'prev')
 
     @property
     def text(self):
