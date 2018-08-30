@@ -52,7 +52,9 @@ setup(
     keywords='blog static site generator',
     packages=find_packages(exclude=['tests']),
     package_data={
-        'wt': ['templates/*.html', 'templates/*.xml', 'templates/*.yaml']},
+        'wt': ['templates/*.html', 'templates/*.xml',
+               'fixtures/*.yaml', 'fixtures/*.md',
+               'fixtures/*.css', 'fixtures/*.png']},
     install_requires=[
         'markdown>=2.6.6',
         'jinja2>=2.8',

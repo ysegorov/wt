@@ -2,7 +2,7 @@
 
 import pytest
 
-from wt.parser import HTMLParser
+from wt.html import HTMLParser
 
 
 @pytest.fixture(scope='function')

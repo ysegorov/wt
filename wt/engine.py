@@ -4,7 +4,6 @@ import os
 import datetime
 import itertools
 import logging
-import urllib.parse
 from collections import OrderedDict
 from pathlib import Path
 from shutil import copytree, rmtree
@@ -16,7 +15,7 @@ from .base import Config, Content
 from .jinja import get_env
 from .exceptions import UrlNotFoundError, InvalidLocalLinkError
 from .paginator import Paginator
-from .parser import HTMLParser
+from .html import HTMLParser, parse_link, is_local_link
 
 
 class WT(object):
@@ -83,6 +82,15 @@ class WT(object):
     def verify_links(self):
         return self.conf_value('verify.links', False)
 
+    @cached_property
+    def baseurl(self):
+        return getattr(self.conf, 'baseurl', '') if self.is_prod else ''
+
+    def unbaseurl(self, url):
+        if not self.is_prod or not self.baseurl:
+            return url
+        return url[len(self.baseurl):]
+
     @property
     def pages(self):
         pages_root, pages = self.pages_root, []
@@ -115,7 +123,7 @@ class WT(object):
 
     @cached_property
     def env(self):
-        return get_env(self.workdir, **self.conf.jinja)
+        return get_env(self.workdir, self.baseurl, **self.conf.jinja)
 
     @cached_property
     def parser(self):
@@ -227,22 +235,21 @@ class WT(object):
 
         links = self.parser.get_links(html)
 
-        def is_local(parsed_link):
-            return parsed_link.scheme == '' and parsed_link.netloc == ''
-
-        local_links = self.local_links
-
         for link in links:
-            parsed = urllib.parse.urlparse(link)
-            if is_local(parsed) and \
-               parsed.path not in local_links and \
-               not self.is_valid_static_link(parsed.path):
-                # FIXME show line numbers?
-                # this is generated html so line numbers might not be useful
-                self.logger.warning('[!] Bad local link "%s" found', link)
-                if self.is_prod:
-                    raise InvalidLocalLinkError
+            parsed = parse_link(link)
+            if is_local_link(parsed):
+                path = self.unbaseurl(parsed.path)
+                if not self.is_valid_local_link(path) and \
+                        not self.is_valid_static_link(path):
+                    # FIXME show line numbers?
+                    # this is generated html - line numbers might not be useful
+                    self.logger.warning('[!] Bad local link "%s" found', link)
+                    if self.is_prod:
+                        raise InvalidLocalLinkError
         return html
+
+    def is_valid_local_link(self, link):
+        return link in self.local_links
 
     def is_valid_static_link(self, link):
         return os.path.exists(os.path.join(self.static_root, link.lstrip('/')))

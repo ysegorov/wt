@@ -35,6 +35,8 @@ def describe_WT():
 
         assert os.path.isfile(
             os.path.join(blog.static_root, 'css', 'style.css'))
+        assert os.path.isfile(
+            os.path.join(blog.static_root, 'img', 'logo96.png'))
 
         blog.build()
         output_path = str(blog.output_path)
@@ -44,8 +46,31 @@ def describe_WT():
                       ('foo', 'index.html'),
                       ('bar', 'index.html'),
                       ('baz', 'index.html'),
-                      ('css', 'style.css')]:
+                      ('css', 'style.css'),
+                      ('img', 'logo96.png')]:
             assert os.path.exists(os.path.join(output_path, *parts))
+
+    def must_properly_handle_blog_with_baseurl(blog_with_baseurl,
+                                               baseurl_factory):
+        blog_with_baseurl.build()
+        output_path = str(blog_with_baseurl.output_path)
+        url_foo = baseurl_factory('/foo/')
+        url_baz = baseurl_factory('/baz/')
+        url_bar = baseurl_factory('/bar/')
+        url_css = baseurl_factory('/css/style.css')
+        url_logo = baseurl_factory('/img/logo96.png')
+
+        for parts, urls in [
+                (('atom.xml', ), (url_baz, url_bar)),
+                (('foo', 'index.html'), (url_bar, url_css)),
+                (('bar', 'index.html'), (url_baz, url_css, url_logo)),
+                (('baz', 'index.html'), (url_foo, url_css)),
+        ]:
+            fn = os.path.join(output_path, *parts)
+            with open(fn, 'rt') as f:
+                content = f.read()
+            for url in urls:
+                assert url in content, content
 
     def must_properly_handle_blog_rebuild(blog):
         blog.build()

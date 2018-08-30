@@ -62,6 +62,17 @@ def describe_Registry():
         assert fltr in jinja_registry
 
 
+def describe_Baseurl():
+
+    def must_return_concatenated_baseurl_and_url():
+
+        baseurl, url = '/foo', '/baz'
+
+        u = jinja.Baseurl(baseurl)
+
+        assert u(url) == '/foo/baz'
+
+
 def describe_get_env():
 
     def must_return_jinja2_environment(jinja_env):

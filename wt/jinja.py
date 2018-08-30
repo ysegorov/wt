@@ -3,7 +3,6 @@
 import os
 
 import jinja2
-import markdown
 
 
 class Registry(object):
@@ -24,7 +23,17 @@ filters = Registry()
 functions = Registry()
 
 
-def get_env(workdir, **config):
+class Baseurl(object):
+    __slots__ = ('baseurl', )
+
+    def __init__(self, baseurl):
+        self.baseurl = baseurl
+
+    def __call__(self, url):
+        return '{}{}'.format(self.baseurl, url)
+
+
+def get_env(workdir, baseurl='', **config):
     loader = jinja2.ChoiceLoader([
         jinja2.FileSystemLoader(
             os.path.join(workdir, 'templates')),
@@ -32,6 +41,7 @@ def get_env(workdir, **config):
             os.path.join(os.path.dirname(__file__), 'templates'))
     ])
     md_exts = config.pop('markdown_extensions', [])
+
     env = jinja2.Environment(loader=loader, **config)
     env.add_extension('jinja2.ext.autoescape')
 
@@ -56,12 +66,13 @@ def get_env(workdir, **config):
         env.globals[getattr(fn, 'function_name',
                             getattr(fn, '__name__', 'func'))] = fn
 
+    if 'baseurl' not in env.globals:
+        env.globals['baseurl'] = Baseurl(baseurl)
+
     if 'markdown' not in env.filters:
+        from .md import make_jinja_filter
 
-        def md(text):
-            return markdown.markdown(text,
-                                     extensions=md_exts,
-                                     output_format='html5')
-
+        md = make_jinja_filter(baseurl, md_exts)
         env.filters['markdown'] = md
+
     return env

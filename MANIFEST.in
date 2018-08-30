@@ -1,3 +1,4 @@
 include LICENSE.txt
 include README.md
 recursive-include wt/templates *
+recursive-include wt/fixtures *

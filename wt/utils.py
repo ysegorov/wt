@@ -8,34 +8,6 @@ from .decorators import reloadable
 from .engine import WT
 
 
-FOO_CONTENT = """
----
-url: /foo/
-title: Foo page title
-modified: 2016-09-18T11:31:00+04:00
----
-# Foo page title
-[bar](/bar/)"""
-
-BAR_CONTENT = """
----
-url: /bar/
-title: Bar page title
-modified: 2016-09-18T20:10:00+04:00
----
-# Bar post title
-[baz](/baz/)"""
-
-BAZ_CONTENT = """
----
-url: /baz/
-title: Baz page title
-modified: 2016-09-20T20:10:00+04:00
----
-# Baz post title
-[foo](/foo/)"""
-
-
 @reloadable('(re)loading configuration...')
 def engine(fn):  # pragma: no cover
     return WT(fn)
@@ -60,7 +32,12 @@ def init(path):
     logger = logging.getLogger('wt.init')
 
     to_copy = (
-        (['templates', 'wt.yaml'], ['wt.yaml']),
+        (['fixtures', 'wt.yaml'], ['wt.yaml']),
+        (['fixtures', 'foo.md'], ['content', 'pages', 'foo.md']),
+        (['fixtures', 'bar.md'], ['content', 'posts', 'bar.md']),
+        (['fixtures', 'baz.md'], ['content', 'posts', 'baz.md']),
+        (['fixtures', 'style.css'], ['static', 'css', 'style.css']),
+        (['fixtures', 'logo96.png'], ['static', 'img', 'logo96.png']),
         (['templates', 'atom.xml'], ['templates', 'atom.xml']),
         (['templates', 'content.html'], ['templates', 'content.html']),
         (['templates', 'mainpage.html'], ['templates', 'mainpage.html']),
@@ -79,22 +56,6 @@ def init(path):
             right.parent.mkdir(parents=True)
         copyfile(str(left), str(right))
         logger.info('[+] "%s" created', str(right))
-
-    to_create = (
-        (['content', 'pages', 'foo.md'], FOO_CONTENT),
-        (['content', 'posts', 'bar.md'], BAR_CONTENT),
-        (['content', 'posts', 'baz.md'], BAZ_CONTENT),
-        (['static', 'css', 'style.css'], '/*styles*/\nbody {color: coral}'),
-    )
-    for parts, text in to_create:
-        p = dst.joinpath(*parts)
-        if p.exists():  # pragma: no cover
-            logger.warn('[!] target file "%s" exists, skipping', str(p))
-            continue
-        if not p.parent.exists():
-            p.parent.mkdir(parents=True)
-        p.write_text(text, encoding='utf-8')
-        logger.info('[+] "%s" created', str(p))
 
     logger.info('[+] done')
 

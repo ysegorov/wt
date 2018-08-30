@@ -39,6 +39,27 @@ def blog(wt_factory, tmpdir):
 
 
 @pytest.fixture(scope='function')
+def baseurl_factory():
+
+    def factory(url):
+        return '/base-url{}'.format(url)
+
+    return factory
+
+
+@pytest.fixture(scope='function')
+def blog_with_baseurl(wt_factory, baseurl_factory, tmpdir):
+    init(str(tmpdir))
+    fn = str(tmpdir.join('wt.yaml'))
+    with open(fn, encoding='utf-8') as f:
+        conf = yaml.load(f)
+    conf['baseurl'] = baseurl_factory('')
+    with open(fn, 'w') as f:
+        yaml.dump(conf, f)
+    return wt_factory(tmpdir.join('wt.yaml'), is_prod=True)
+
+
+@pytest.fixture(scope='function')
 def blog_without_static(wt_factory, tmpdir):
     init(str(tmpdir))
     fn = str(tmpdir.join('wt.yaml'))

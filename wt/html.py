@@ -1,7 +1,17 @@
 # -*- coding: utf-8 -*-
 
+import urllib.parse
+
 from collections import defaultdict
 from html.parser import HTMLParser as BaseHTMLParser
+
+
+def parse_link(link):
+    return urllib.parse.urlparse(link)
+
+
+def is_local_link(parsed_link):
+    return parsed_link.scheme == '' and parsed_link.netloc == ''
 
 
 class HTMLParser(BaseHTMLParser):
