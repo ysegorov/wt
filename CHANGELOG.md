@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 1.0.0 (?)
+## 1.0.0 (2018-09-04)
 
 - [+] #28 added support for baseurl
 - [+] #30 added support for yaml-formatted content front matter
