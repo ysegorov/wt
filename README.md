@@ -10,13 +10,12 @@
 Pretty small and simplified static blog generator with following features:
 
 - [markdown][markdown] for content
-- [yaml][yaml] for configuration
+- [yaml][yaml] for project configuration
 - [jinja2][jinja2] for templating
 - [atom][atom] for feed
 - python's standard library `HTTPServer` as a development http server
 - only two types of content - **page** and **post**
-- content metadata lives in configuration file, configuration file can be
-  splitted into multiple nested files
+- [yaml front matter][front-matter] for content metadata
 - have sensible defaults for content sources
 - no python coding needed to work with
 
@@ -90,6 +89,7 @@ MIT
 
 [markdown]: http://daringfireball.net/projects/markdown/
 [yaml]: http://yaml.org/
+[front-matter]: https://jekyllrb.com/docs/front-matter/
 [jinja2]: http://jinja.pocoo.org/
 [atom]: https://en.wikipedia.org/wiki/Atom_(standard)
 [pelican]: http://docs.getpelican.com/
