@@ -17,7 +17,6 @@ Pretty small and simplified static blog generator with following features:
 - only two types of content - **page** and **post**
 - [yaml front matter][front-matter] for content metadata
 - have sensible defaults for content sources
-- no python coding needed to work with
 
 
 ## Why
