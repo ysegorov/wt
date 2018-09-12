@@ -40,7 +40,6 @@ def get_env(workdir, baseurl='', **config):
         jinja2.FileSystemLoader(
             os.path.join(os.path.dirname(__file__), 'templates'))
     ])
-    md_exts = config.pop('markdown_extensions', [])
 
     env = jinja2.Environment(loader=loader, **config)
     env.add_extension('jinja2.ext.autoescape')
@@ -72,7 +71,7 @@ def get_env(workdir, baseurl='', **config):
     if 'markdown' not in env.filters:
         from .md import make_jinja_filter
 
-        md = make_jinja_filter(baseurl, md_exts)
+        md = make_jinja_filter(baseurl)
         env.filters['markdown'] = md
 
     return env

@@ -23,7 +23,7 @@ def markdown_content():
 @pytest.fixture(scope='function')
 def markdown_filter_factory():
 
-    def factory(baseurl, extensions=[]):
-        return md.make_jinja_filter(baseurl, extensions)
+    def factory(baseurl):
+        return md.make_jinja_filter(baseurl)
 
     return factory

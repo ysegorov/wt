@@ -2,6 +2,8 @@
 
 import markdown
 from markdown.extensions import Extension
+from markdown.extensions.extra import ExtraExtension
+from markdown.extensions.toc import TocExtension
 from markdown.treeprocessors import Treeprocessor
 
 from .html import parse_link, is_local_link
@@ -38,10 +40,13 @@ class BaseurlExtension(Extension):
         md.treeprocessors.add('baseurl', proc, '_end')
 
 
-def make_jinja_filter(baseurl, extensions):
-    assert isinstance(extensions, list)
+def make_jinja_filter(baseurl):
 
-    extensions.append(BaseurlExtension(baseurl=baseurl))
+    extensions = [
+        ExtraExtension(),
+        TocExtension(permalink=True),
+        BaseurlExtension(baseurl=baseurl),
+    ]
 
     def md(text):
         return markdown.markdown(text,
