@@ -1,6 +1,11 @@
 # Changelog
 
 
+## 2.0.0 (?)
+
+- [-] #32 drop support for configurable `python-markdown` extensions
+
+
 ## 1.0.0 (2018-09-04)
 
 - [+] #28 added support for baseurl
