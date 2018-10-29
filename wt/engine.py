@@ -97,7 +97,7 @@ class WT(object):
         if os.path.isdir(pages_root):
             pages = (Content(src=os.path.join(pages_root, x))
                      for x in os.listdir(pages_root))
-        return {x.url: x for x in pages}
+        return {x.url: x for x in pages if x.url}
 
     @property
     def posts(self):

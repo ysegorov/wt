@@ -147,3 +147,6 @@ def describe_WT():
         fn.write('- item 2\n')
         wt_factory(fn)
         assert 'expected to be a dict, got "list"' in caplog.text.lower()
+
+    def must_skip_pages_without_url(blog_with_pages_without_url):
+        assert len(blog_with_pages_without_url.pages) == 0

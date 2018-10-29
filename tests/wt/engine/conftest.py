@@ -89,6 +89,17 @@ def blog_with_missed_config(wt_factory, tmpdir):
     return wt_factory(fn)
 
 
+@pytest.fixture(scope='function')
+def blog_with_pages_without_url(wt_factory, tmpdir):
+    init(str(tmpdir))
+    foo = tmpdir.join('content', 'pages', 'foo.md')
+    foo.write('foo page content')
+    foo1 = tmpdir.join('content', 'pages', 'foo1.md')
+    foo1.write('---\nurl: ""\n---\nfoo1 page content')
+
+    return wt_factory(tmpdir.join('wt.yaml'))
+
+
 MAINPAGE_PAGED = """\
 {% extends "base.html" %}
 {% block content %}
