@@ -43,7 +43,7 @@ class WT(object):
                             ' got "%s" instead', type(conf).__name__)
                         conf = {}
         else:
-            self.logger.warn('Missing config file "%s"', filename)
+            self.logger.warning('Missing config file "%s"', filename)
 
         self.conf = Config(**(conf or {}))
 

@@ -94,7 +94,7 @@ class Content(Object):
         if src is not None:
             _, txt = load_content(src)
         if not txt:
-            logger.warn('  ! missing content file "%s"', src)
+            logger.warning('  ! missing content file "%s"', src)
         return txt.strip()
 
     def __getattr__(self, name):

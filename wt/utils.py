@@ -47,10 +47,10 @@ def init(path):
         left = src.joinpath(*from_)
         right = dst.joinpath(*to_)
         if not left.exists():  # pragma: no cover
-            logger.warn('[!] missing file "%s", skipping', str(left))
+            logger.warning('[!] missing file "%s", skipping', str(left))
             continue
         if right.exists():  # pragma: no cover
-            logger.warn('[!] target file "%s" exists, skipping', str(right))
+            logger.warning('[!] target file "%s" exists, skipping', str(right))
             continue
         if not right.parent.exists():
             right.parent.mkdir(parents=True)

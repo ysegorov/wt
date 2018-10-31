@@ -20,7 +20,7 @@ class reloadable(object):
             try:
                 modified = os.stat(filename).st_mtime
             except FileNotFoundError:
-                self.logger.warn(
+                self.logger.warning(
                     'File not found "%s", skipping stat', filename)
                 pass
             else:
