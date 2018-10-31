@@ -34,10 +34,10 @@ class BaseurlExtension(Extension):
         }
         super(BaseurlExtension, self).__init__(*args, **kwargs)
 
-    def extendMarkdown(self, md, md_globals):
+    def extendMarkdown(self, md):
         md.registerExtension(self)
         proc = BaseurlTreeprocessor(self.getConfig('baseurl'))
-        md.treeprocessors.add('baseurl', proc, '_end')
+        md.treeprocessors.register(proc, 'baseurl', 1)
 
 
 def make_jinja_filter(baseurl):
