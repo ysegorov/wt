@@ -56,9 +56,9 @@ setup(
                'fixtures/*.yaml', 'fixtures/*.md',
                'fixtures/*.css', 'fixtures/*.png']},
     install_requires=[
-        'markdown>=2.6.6',
-        'jinja2>=2.8',
-        'pyyaml>=3.12',
+        'markdown>=3.0.1',
+        'jinja2>=2.10',
+        'pyyaml>=3.13',
         'cached-property>=1.3.0',
     ],
     extras_require={
