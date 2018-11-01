@@ -71,8 +71,11 @@ setup(
         ]
     },
     setup_requires=['pytest-runner>=2.0,<3dev'],
-    tests_require=['pytest>=3.7.0',
-                   'pytest-describe>=0.11.0'],
+    tests_require=[
+        'coverage>=4.2',
+        'pytest>=3.7.0',
+        'pytest-cov>=2.3.1',
+        'pytest-describe>=0.11.0'],
     entry_points={
         'console_scripts': [
             'wt=wt.cli:main'
