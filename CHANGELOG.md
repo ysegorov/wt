@@ -6,6 +6,8 @@
 ### Breaking changes
 
 - dropped support for configurable `python-markdown` extensions (#32)
+- switched from `{{ text|markdown }}` filter to `{{ markdown(text) }}` function
+  in `jinja` templates (#37)
 
 ### Changes
 
