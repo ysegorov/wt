@@ -40,7 +40,16 @@ class BaseurlExtension(Extension):
         md.treeprocessors.register(proc, 'baseurl', 1)
 
 
-def make_jinja_filter(baseurl):
+class md(object):
+
+    def __init__(self, **kwargs):
+        self.md = markdown.Markdown(**kwargs)
+
+    def __call__(self, text):
+        return self.md.reset().convert(text)
+
+
+def make_jinja_function(baseurl):
 
     extensions = [
         ExtraExtension(),
@@ -48,9 +57,4 @@ def make_jinja_filter(baseurl):
         BaseurlExtension(baseurl=baseurl),
     ]
 
-    def md(text):
-        return markdown.markdown(text,
-                                 extensions=extensions,
-                                 output_format='html5')
-
-    return md
+    return md(extensions=extensions, output_format='html5')

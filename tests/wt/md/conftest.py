@@ -21,9 +21,9 @@ def markdown_content():
 
 
 @pytest.fixture(scope='function')
-def markdown_filter_factory():
+def markdown_function_factory():
 
     def factory(baseurl):
-        return md.make_jinja_filter(baseurl)
+        return md.make_jinja_function(baseurl)
 
     return factory

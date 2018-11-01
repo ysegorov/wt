@@ -18,7 +18,7 @@ def jinja_env(tmpdir):
 
 
 TEMPLATE = """\
-{{ content|markdown }}
+{{ markdown(content) }}
 """
 
 

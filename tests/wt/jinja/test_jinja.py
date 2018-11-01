@@ -88,6 +88,6 @@ def describe_get_env():
     Hello, [world](http://example.com)!
     """
 
-    def must_use_markdown_filter(template_with_markdown):
+    def must_use_markdown_function(template_with_markdown):
         content = template_with_markdown.render(content=CONTENT)
         assert 'Hello' in content and 'world' in content

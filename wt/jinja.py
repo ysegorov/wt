@@ -68,10 +68,10 @@ def get_env(workdir, baseurl='', **config):
     if 'baseurl' not in env.globals:
         env.globals['baseurl'] = Baseurl(baseurl)
 
-    if 'markdown' not in env.filters:
-        from .md import make_jinja_filter
+    if 'markdown' not in env.globals:
+        from .md import make_jinja_function
 
-        md = make_jinja_filter(baseurl)
-        env.filters['markdown'] = md
+        md = make_jinja_function(baseurl)
+        env.globals['markdown'] = md
 
     return env

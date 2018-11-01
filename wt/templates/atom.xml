@@ -17,7 +17,7 @@
         <summary>{% if post.summary %}{{ post.summary }}{% endif %}</summary>
         <content type="html">
             {% autoescape true -%}
-            {{ post.text|markdown }}
+            {{ markdown(post.text) }}
             {%- endautoescape %}
         </content>
         <author>

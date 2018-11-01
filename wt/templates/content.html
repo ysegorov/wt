@@ -2,5 +2,5 @@
 
 {% block content %}
 <div>{{ content.title }}</div>
-<div>{{ content.text|markdown }}</div>
+<div>{{ markdown(content.text) }}</div>
 {% endblock %}
