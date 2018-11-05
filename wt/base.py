@@ -29,7 +29,7 @@ def load_content(filename):
     if os.path.isfile(filename):
         with open(filename, 'rt', encoding='utf-8') as f:
             text = f.read()
-        if len(fm_re.findall(text)) == 2:
+        if len(fm_re.findall(text)) >= 2:
             _, fm, text = fm_re.split(text, maxsplit=2)
             fm = yaml.safe_load(fm)
     return (fm, text)
