@@ -8,6 +8,9 @@
 - dropped support for configurable `python-markdown` extensions (#32)
 - switched from `{{ text|markdown }}` filter to `{{ markdown(text) }}` function
   in `jinja` templates (#37)
+- dropped support for passing `WT` engine instance to rendering context (#40)
+- dropped support for `feed_domain` rendering context variable in favour of
+  `host` variable (#41)
 
 ### Changes
 
