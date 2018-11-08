@@ -4,9 +4,6 @@ subtitle: Subtitle
 url: https://www.example.com
 author: John Smith
 
-feed:
-    domain: example.com
-
 verify:
     links: true
 

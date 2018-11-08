@@ -163,8 +163,6 @@ class WT(object):
                        pages=pages)
         if path.endswith('atom.xml') and self.with_feed:
             tmpl = self.conf_value('templates.feed', 'atom.xml')
-            feed_domain = self.conf_value('feed.domain', 'example.com')
-            context['feed_domain'] = feed_domain
             return self.render_html(tmpl, **context)
 
         elif path in self.pages:
