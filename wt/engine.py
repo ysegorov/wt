@@ -153,50 +153,39 @@ class WT(object):
         headers = headers or {}
         host = headers.get('Host')
         now = datetime.datetime.utcnow()
+        posts = list(self.posts.values())
+        pages = list(self.pages.values())
+        context = dict(config=self.conf,
+                       host=host,
+                       now=now,
+                       is_prod=self.is_prod,
+                       posts=posts,
+                       pages=pages)
         if path.endswith('atom.xml') and self.with_feed:
             tmpl = self.conf_value('templates.feed', 'atom.xml')
-            return self.render_html(tmpl,
-                                    wt=self,
-                                    config=self.conf,
-                                    host=host,
-                                    now=now,
-                                    is_prod=self.is_prod,
-                                    posts=self.posts.values(),
-                                    pages=self.pages.values())
+            feed_domain = self.conf_value('feed.domain', 'example.com')
+            context['feed_domain'] = feed_domain
+            return self.render_html(tmpl, **context)
+
         elif path in self.pages:
             page = self.pages[path]
             tmpl = (page.template or
                     self.conf_value('templates.page', 'page.html'))
-            return self.render_html(tmpl,
-                                    wt=self,
-                                    now=now,
-                                    is_prod=self.is_prod,
-                                    content=page,
-                                    config=self.conf)
+            context['content'] = page
+            return self.render_html(tmpl, **context)
+
         elif path in self.posts:
             post = self.posts[path]
             tmpl = (post.template or
                     self.conf_value('templates.post', 'post.html'))
-            return self.render_html(tmpl,
-                                    wt=self,
-                                    now=now,
-                                    is_prod=self.is_prod,
-                                    content=post,
-                                    config=self.conf)
+            context['content'] = post
+            return self.render_html(tmpl, **context)
 
         tmpl = self.conf_value('templates.mainpage', 'mainpage.html')
-        posts = list(self.posts.values())
         paginator = self.paginator(path)
         if path == '/' or path in paginator.pages:
-            return self.render_html(tmpl,
-                                    wt=self,
-                                    config=self.conf,
-                                    paginator=paginator,
-                                    posts=posts,
-                                    pages=self.pages,
-                                    is_prod=self.is_prod,
-                                    host=host,
-                                    now=now)
+            context['paginator'] = paginator
+            return self.render_html(tmpl, **context)
 
         raise UrlNotFoundError
 
