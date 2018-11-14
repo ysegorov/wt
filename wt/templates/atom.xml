@@ -5,13 +5,13 @@
     <subtitle>{{ config.subtitle }}</subtitle>
     <link href="{{ server_url }}{{ baseurl('/') }}" rel="alternative" />
     <link href="{{ server_url }}{{ baseurl('/atom.xml') }}" rel="self" />
-    <id>tag:{{ host }}</id>
+    <id>{{ server_url }}</id>
     <updated>{{ now.isoformat() }}Z</updated>
     {% for post in posts|reverse -%}
     <entry>
         <title>{{ post.title }}</title>
         <link href="{{ server_url }}{{ baseurl(post.url) }}" rel="alternate" />
-        <id>tag:{{ host }},{{ post.modified.strftime('%Y-%m-%d') }}:{{ baseurl(post.url) }}</id>
+        <id>{{ server_url }}{{ baseurl(post.url) }}</id>
         <updated>{{ post.modified.isoformat() }}Z</updated>
         <summary>{% if post.summary %}{{ post.summary }}{% endif %}</summary>
         <content type="html">
