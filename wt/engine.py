@@ -117,9 +117,8 @@ class WT(object):
             dst[post.url] = _prev = post
         return dst
 
-    def paginator(self, path='/'):
-        return Paginator(
-            list(self.posts.values()), path, **self.conf.paginate)
+    def paginator(self, posts, path='/'):
+        return Paginator(posts, path, **self.conf.paginate)
 
     @cached_property
     def env(self):
@@ -131,14 +130,15 @@ class WT(object):
 
     @property
     def local_links(self):
-        pages, posts = self.pages.keys(), self.posts.keys()
+        pages, posts = self.pages, self.posts
         links = list(
             itertools.chain(
                 ['/'] if '/' not in pages else [],
                 ['/atom.xml'] if self.with_feed else [],
-                (x for x in self.paginator().pages.keys() if x != '/'),
-                pages,
-                posts,
+                (x for x in self.paginator(list(posts.values())).pages.keys()
+                 if x != '/'),
+                pages.keys(),
+                posts.keys(),
             ))
         return links
 
@@ -153,34 +153,34 @@ class WT(object):
         headers = headers or {}
         host = headers.get('Host')
         now = datetime.datetime.utcnow()
-        posts = list(self.posts.values())
-        pages = list(self.pages.values())
+        posts = self.posts
+        pages = self.pages
         context = dict(config=self.conf,
                        host=host,
                        now=now,
                        is_prod=self.is_prod,
-                       posts=posts,
-                       pages=pages)
+                       posts=posts.values(),
+                       pages=pages.values())
         if path.endswith('atom.xml') and self.with_feed:
             tmpl = self.conf_value('templates.feed', 'atom.xml')
             return self.render_html(tmpl, **context)
 
-        elif path in self.pages:
-            page = self.pages[path]
+        elif path in pages:
+            page = pages[path]
             tmpl = (page.template or
                     self.conf_value('templates.page', 'page.html'))
             context['content'] = page
             return self.render_html(tmpl, **context)
 
-        elif path in self.posts:
-            post = self.posts[path]
+        elif path in posts:
+            post = posts[path]
             tmpl = (post.template or
                     self.conf_value('templates.post', 'post.html'))
             context['content'] = post
             return self.render_html(tmpl, **context)
 
         tmpl = self.conf_value('templates.mainpage', 'mainpage.html')
-        paginator = self.paginator(path)
+        paginator = self.paginator(list(posts.values()), path)
         if path == '/' or path in paginator.pages:
             context['paginator'] = paginator
             return self.render_html(tmpl, **context)
