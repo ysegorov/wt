@@ -15,6 +15,8 @@
 ### Changes
 
 - pages without or empty `url` definition in front matter are skipped (#34)
+- slightly optimized `WT.render` method (build `posts` list only once per
+    requested url or per url to be built)
 
 
 ## 1.0.0 (2018-09-04)
