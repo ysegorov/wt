@@ -1,0 +1,34 @@
+{% extends "content.html" %}
+
+{% macro toc_item(url, item) -%}
+{% set name=item.get('name', '') %}
+{% set ref=item.get('id', '') %}
+{% set children=item.get('children') %}
+{% if name and ref -%}
+<li>
+    <a href="{{ baseurl(url) }}#{{ ref }}">{{ name }}</a>
+    {% if children -%}
+    <ul class="mb-small pl-normal">
+        {% for child in children -%}
+        {{ toc_item(url, child) }}
+        {%- endfor %}
+    </ul>
+    {%- endif %}
+</li>
+{%- endif %}
+{%- endmacro %}
+
+{% block content %}
+<h1>{{ content.title }}</h1>
+<ul class="ml-large pl-normal">
+{% for page in pages|selectattr('order')|sort(attribute='order') %}
+{% set text = markdown(page.text) %}
+{% for item in markdown.md.toc_tokens %}
+{{ toc_item(page.url, item) }}
+{% endfor %}
+{% endfor %}
+</ul>
+{% endblock %}
+
+{% block toc %}
+{% endblock toc %}

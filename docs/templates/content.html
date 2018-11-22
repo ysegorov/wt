@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content.title }} | {{ config.title }}{% endblock %}
+
+{% block content %}
+{{ markdown(content.text) }}
+{% endblock %}
+
+{% block toc %}
+<div class="pl-normal b-bottom bc-white-50">
+    <h3 class="">Table of Contents</h3>
+    {{ markdown.md.toc }}
+</div>
+{% if content.next -%}
+<div class="pl-normal pb-normal b-bottom bc-white-50">
+    <h3 class="">Next Topic</h3>
+    <a href="{{ baseurl(content.next.url) }}">{{ content.next.title }}</a>
+</div>
+{%- endif %}
+{% endblock toc %}
