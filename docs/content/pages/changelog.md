@@ -24,6 +24,8 @@ order: 8
 - pages without or empty `url` definition in front matter are skipped (#34)
 - slightly optimized `WT.render` method (build `posts` list only once per
     requested url or per url to be built)
+- fixed an issue with fragment-only urls - don't prepend baseurl to them (#43)
+- documentation sources added to repository (#33)
 
 
 ## 1.0.0 (2018-09-04)
