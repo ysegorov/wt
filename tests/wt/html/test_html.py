@@ -11,10 +11,15 @@ def describe_is_local_link():
             ('https://goo.gl', False),
             ('http://goo.gl', False),
             ('//goo.gl', False),
+            ('/', True),
             ('/foo', True),
             ('http://127.0.0.1:9000/', False),
             ('/img/logo.jpg', True),
             ('https://localhost/baz', False),
+            ('#hdr', False),
+            ('?foo=baz', False),
+            ('/foo#hdr', True),
+            ('/foo?baz=bar', True),
         ]
 
         for url, expected in pairs:

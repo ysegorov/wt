@@ -11,7 +11,9 @@ def parse_link(link):
 
 
 def is_local_link(parsed_link):
-    return parsed_link.scheme == '' and parsed_link.netloc == ''
+    return (parsed_link.scheme == '' and
+            parsed_link.netloc == '' and
+            parsed_link.path != '')
 
 
 class HTMLParser(BaseHTMLParser):
