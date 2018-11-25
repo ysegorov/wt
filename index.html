@@ -1,0 +1,133 @@
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Home | WT documentation</title>
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+        
+
+        
+        <!-- Place favicon.ico in the root directory -->
+
+        
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:400,700,400italic,Kreon:400,700">
+        <link rel="stylesheet" href="/wt/css/wt.css?ts=1543143183">
+        <link rel="stylesheet" href="/wt/css/hljs/zenburn.css?ts=1543143183">
+        
+    </head>
+    <body class="bg-base bg-lines">
+        <div class="gray-192 width-900 ml-auto mr-auto p-normal bg-base-75">
+            <div class="flex flex-items-end bg-base b-bottom bc-white-50 bw-3">
+                <div class="flex-non-grow flex-shrink flex-basis-auto ph-normal">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="wt-logo width-125 height-125" viewBox="0 0 16.933333 16.933333">
+    <g>
+        <path class="wt-logo-line" d="M.53 14.544h15.874"/>
+        <path class="wt-logo-symb" d="M10.322 2.256l-1.786.546.086.283c.149-.033.27-.025.363.025.095.046.166.143.212.291.028.094.049.213.061.356.012.14.018.282.018.426L9.26 7.358 6.92 3.296l-.968.296.106 4.744-1.65-2.75c-.181-.294-.295-.517-.34-.669a.376.376 0 0 1 .02-.31c.052-.088.15-.163.293-.225l-.086-.283-2.305.704.087.283a.643.643 0 0 1 .258.033c.074.028.15.08.226.156.076.076.182.222.316.437l2.755 4.403 1.071-.328-.081-4.372L8.82 9.141l1.02-.312.17-5.185c.01-.275.027-.474.052-.597a.82.82 0 0 1 .119-.303.631.631 0 0 1 .227-.205zm2.249 3.095l-2.313.707.276.903c.212-.012.44-.015.682-.007.247.006.452.04.615.1.164.066.298.159.402.28.105.122.197.315.278.579l.163.534-6.57 2.008c-.21.064-.39.112-.54.143a.905.905 0 0 1-.379.008.564.564 0 0 1-.292-.177 1.864 1.864 0 0 1-.251-.399l-.435.134L5.32 13.8l.435-.133a1.856 1.856 0 0 1-.027-.396.965.965 0 0 1 .06-.249.676.676 0 0 1 .147-.181.97.97 0 0 1 .267-.161c.12-.051.295-.112.528-.183l6.57-2.009.145.475a2.4 2.4 0 0 1 .1.444.94.94 0 0 1 0 .31.925.925 0 0 1-.093.26 1.21 1.21 0 0 1-.194.26 1.76 1.76 0 0 1-.306.274 13.49 13.49 0 0 1-.598.4l.276.902 2.313-.707z"/>
+    </g>
+</svg>
+                </div>
+                <div class="flexy flex flex-column">
+                    <div class="serif text-italic text-right fs-medium pb-huge">
+                        Yet Another Static Site Generator
+                    </div>
+                    <div class="flex flex-justify-end mb-small">
+                        <a href="/wt/" class="ib ph-normal pv-small text-no-underline blue hover-white hover-bg-blue">Home</a>
+                        <a href="/wt/contents/" class="ib ph-normal pv-small text-no-underline blue hover-white hover-bg-blue">Docs</a>
+                        <a href="/wt/" class="ib ph-normal pv-small text-no-underline blue hover-white hover-bg-blue">Develop</a>
+                    </div>
+                </div>
+            </div>
+            <div class="flex wrapper">
+                <div class="flexy pr-normal of-auto" role="main">
+                    
+<h1 id="welcome">Welcome<a class="headerlink" href="#welcome" title="Permanent link">&para;</a></h1>
+<p><strong>wt</strong> is a small library helping to generate static site or blog or whatever
+else named <em>static</em>. It tries to be invisible for a blogger and have just three
+command-line interface commands. At the same time it is not expected to become
+a "swiss knife" - authoring still requires some user intervention to templates,
+markup, styles and javascript.</p>
+<p>This library requires <strong>python 3</strong> and it's recommended to use it within
+<strong>virtual environment</strong>. See <a href="/wt/quickstart/">Quick start</a> for introduction.</p>
+<p>Strictly speaking there is no python coding needed to work with the library but
+it's possible to extend <code>jinja2</code> templates using selfmade filters and
+functions.</p>
+<p>And please keep in mind that library offers no default <code>css</code> styling or themes.</p>
+<p>Happy authoring!</p>
+<h2 class="fs-normal-xxl" id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="http://daringfireball.net/projects/markdown/">markdown</a> for content</li>
+<li><a href="http://yaml.org/">yaml</a> for configuration</li>
+<li><a href="http://jinja.pocoo.org/">jinja2</a> for templates</li>
+<li><a href="https://en.wikipedia.org/wiki/Atom_(standard)">atom</a> for feed</li>
+<li>two types of content - <strong>page</strong> and <strong>post</strong></li>
+<li><a href="http://yaml.org/">yaml</a>-formatted front matter for content metadata</li>
+<li>simple <code>HTTPServer</code> for development</li>
+</ul>
+<h2 class="fs-normal-xxl" id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="/wt/quickstart/">Quickstart</a></li>
+<li><a href="/wt/contents/">Contents</a></li>
+<li><a href="/wt/changelog/">Changelog</a></li>
+</ul>
+<p>Documentation is written using <a href="https://github.com/ysegorov/wt/">wt</a>. You can check documentation sources
+<a href="https://github.com/ysegorov/wt/tree/master/docs/">here</a>.</p>
+<h2 class="fs-normal-xxl" id="code">Code<a class="headerlink" href="#code" title="Permanent link">&para;</a></h2>
+<p>The code is hosted on <a href="https://github.com/ysegorov/wt/">GitHub</a> and is available on <a href="https://pypi.python.org/pypi/wt/">PyPi</a>. Feel
+free to open <a href="https://github.com/ysegorov/wt/issues">an issue</a>.</p>
+<h2 class="fs-normal-xxl" id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
+<p>The library is licensed under <a href="https://github.com/ysegorov/wt/blob/master/LICENSE.txt">MIT license</a>.</p>
+
+                </div>
+                <div class="non-flexy width-225 b-left bc-white-50 sidebar" role="navigation">
+                    
+                    <div class="pl-normal b-bottom bc-white-50">
+    <h3 class="">Download</h3>
+    <p>Current version: <a href="https://pypi.org/projects/wt/"><img src="https://img.shields.io/pypi/v/wt.svg?style=flat-square" alt="pypi badge"></a></p>
+    <p>Install with:<br>
+        <pre><code class="pt-tiny pb-tiny">pip install -U wt</code></pre>
+    </p>
+</div>
+<div class="pl-normal b-bottom bc-white-50">
+    <h3 class="">Questions? Suggestions?</h3>
+    <p>Please open an issue at the project's <a href="https://github.com/ysegorov/wt/issues">issue tracker</a>.</p>
+</div>
+                </div>
+            </div>
+            <div class="wrapper pt-normal b-top bc-white-50 text-center text-italic fs-small" role="contentinfo">
+                The content of this site is licensed under <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> license. Created using <strong>wt</strong> 2.0.0.
+            </div>
+        </div>
+
+        
+        <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="/wt/js/highlight.pack.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+        <script>
+            (function (root) {
+                'use strict';
+                var hash = root.location.hash.slice(1),
+                    doc = root.document;
+                if (hash) {
+                    setTimeout(function () {
+                        var el = doc.getElementById(hash);
+                        if (el) {
+                            el.scrollIntoView(true);
+                        }
+                    }, 100);
+                }
+            })(window);
+        </script>
+        
+
+        
+        
+        
+    </body>
+</html>

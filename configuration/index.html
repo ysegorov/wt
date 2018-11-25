@@ -1,0 +1,291 @@
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Configuration | WT documentation</title>
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+        
+
+        
+        <!-- Place favicon.ico in the root directory -->
+
+        
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:400,700,400italic,Kreon:400,700">
+        <link rel="stylesheet" href="/wt/css/wt.css?ts=1543143183">
+        <link rel="stylesheet" href="/wt/css/hljs/zenburn.css?ts=1543143183">
+        
+    </head>
+    <body class="bg-base bg-lines">
+        <div class="gray-192 width-900 ml-auto mr-auto p-normal bg-base-75">
+            <div class="flex flex-items-end bg-base b-bottom bc-white-50 bw-3">
+                <div class="flex-non-grow flex-shrink flex-basis-auto ph-normal">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="wt-logo width-125 height-125" viewBox="0 0 16.933333 16.933333">
+    <g>
+        <path class="wt-logo-line" d="M.53 14.544h15.874"/>
+        <path class="wt-logo-symb" d="M10.322 2.256l-1.786.546.086.283c.149-.033.27-.025.363.025.095.046.166.143.212.291.028.094.049.213.061.356.012.14.018.282.018.426L9.26 7.358 6.92 3.296l-.968.296.106 4.744-1.65-2.75c-.181-.294-.295-.517-.34-.669a.376.376 0 0 1 .02-.31c.052-.088.15-.163.293-.225l-.086-.283-2.305.704.087.283a.643.643 0 0 1 .258.033c.074.028.15.08.226.156.076.076.182.222.316.437l2.755 4.403 1.071-.328-.081-4.372L8.82 9.141l1.02-.312.17-5.185c.01-.275.027-.474.052-.597a.82.82 0 0 1 .119-.303.631.631 0 0 1 .227-.205zm2.249 3.095l-2.313.707.276.903c.212-.012.44-.015.682-.007.247.006.452.04.615.1.164.066.298.159.402.28.105.122.197.315.278.579l.163.534-6.57 2.008c-.21.064-.39.112-.54.143a.905.905 0 0 1-.379.008.564.564 0 0 1-.292-.177 1.864 1.864 0 0 1-.251-.399l-.435.134L5.32 13.8l.435-.133a1.856 1.856 0 0 1-.027-.396.965.965 0 0 1 .06-.249.676.676 0 0 1 .147-.181.97.97 0 0 1 .267-.161c.12-.051.295-.112.528-.183l6.57-2.009.145.475a2.4 2.4 0 0 1 .1.444.94.94 0 0 1 0 .31.925.925 0 0 1-.093.26 1.21 1.21 0 0 1-.194.26 1.76 1.76 0 0 1-.306.274 13.49 13.49 0 0 1-.598.4l.276.902 2.313-.707z"/>
+    </g>
+</svg>
+                </div>
+                <div class="flexy flex flex-column">
+                    <div class="serif text-italic text-right fs-medium pb-huge">
+                        Yet Another Static Site Generator
+                    </div>
+                    <div class="flex flex-justify-end mb-small">
+                        <a href="/wt/" class="ib ph-normal pv-small text-no-underline blue hover-white hover-bg-blue">Home</a>
+                        <a href="/wt/contents/" class="ib ph-normal pv-small text-no-underline blue hover-white hover-bg-blue">Docs</a>
+                        <a href="/wt/" class="ib ph-normal pv-small text-no-underline blue hover-white hover-bg-blue">Develop</a>
+                    </div>
+                </div>
+            </div>
+            <div class="flex wrapper">
+                <div class="flexy pr-normal of-auto" role="main">
+                    
+<h1 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h1>
+<p>Configuration file <code>wt.yaml</code> is the core of your project. It contains your
+project's metadata but it's not limited to - it can contain any data you like.</p>
+<p>Your configuration file should live in the root of your project as <strong>wt</strong>
+engine will search for content files in subdirectories.</p>
+<p>The reason to use <a href="http://yaml.org">yaml</a> for configuration is quite simple - the format
+is human readable and human writable.</p>
+<p>Here are excerpts from <code>wt.yaml</code> file you will find in your project's root
+after running <code>wt init .</code> command with some comments attached.</p>
+<h2 id="generic-information">Generic information<a class="headerlink" href="#generic-information" title="Permanent link">&para;</a></h2>
+<pre><code class="yaml">---                                 # start marker of yaml document
+title: Title                        # Title of your project
+subtitle: Subtitle                  # Subtitle of your project
+url: &quot;https://www.example.com&quot;      # Url of your site
+author: John Smith                  # Author
+
+</code></pre>
+
+<p>These properties are not required in general and you can skip them. They can be
+referenced in <a href="/wt/templates/">templates</a> for page titles or meta tags content.</p>
+<p>In business environments it's pretty common to have a staging server to check
+the project before deploying the code to production.
+This means it would be nice to have a way to dynamically specify some values
+in <code>wt.yaml</code> and you have it. You can reference environment variables in values
+and the value will be updated accordingly.</p>
+<p>Here is an example for <code>url</code>:</p>
+<pre><code class="yaml">url: &quot;https://${DOMAIN}/&quot;
+</code></pre>
+
+<p>and here is how you can specify the value in terminal:</p>
+<pre><code class="bash">$ DOMAIN=www.example.com wt develop
+</code></pre>
+
+<p>and <strong><code>config.url</code></strong> variable will have <strong><code>https://www.example.com/</code></strong>
+value within your templates.</p>
+<h3 id="baseurl">Baseurl<a class="headerlink" href="#baseurl" title="Permanent link">&para;</a></h3>
+<pre><code class="yaml">baseurl: /repository
+</code></pre>
+
+<p>Sometimes your project might be served under prefixed url (think of
+<a href="https://help.github.com/articles/user-organization-and-project-pages/#building-project-pages-sites">GitHub Pages for projects</a>), something like
+<code>https://username.github.io/repository</code>.</p>
+<p>We have several problems here:</p>
+<ul>
+<li>there is no need to use such prefixed url while authoring,</li>
+<li>static assets should have proper prefixed urls on build,</li>
+<li><strong>pages</strong> and <strong>posts</strong> written in <code>markdown</code> should have properly prefixed
+    urls on build (including all local urls within content too).</li>
+</ul>
+<p>To address these problems you should:</p>
+<ul>
+<li>provide <code>baseurl</code> setting in your <code>wt.yaml</code> configuration (like in the
+    example above),</li>
+<li>use <code>baseurl(/path/to/some/assets.css)</code> function within your templates to
+    create proper urls for static assets,</li>
+<li>keep urls within <strong>page</strong> or <strong>post</strong> content written in <code>markdown</code> WITHOUT
+    baseurl prefix (in case you will be using provided by <code>wt</code> engine
+    <code>markdown()</code> function to convert your content to html - it will update urls
+    automaticcaly).</li>
+</ul>
+<p>This documentation is written using <code>wt</code> and hosted using <a href="https://help.github.com/articles/user-organization-and-project-pages/#building-project-pages-sites">GitHub Pages for
+projects</a> so you can check <code>docs</code> folder of the <a href="https://github.com/ysegorov/wt">wt
+repository</a> as a real-life example.</p>
+<h2 id="feed">Feed<a class="headerlink" href="#feed" title="Permanent link">&para;</a></h2>
+<p>You will probably want to have a feed for a blog or news site.
+Please check default <a href="https://github.com/ysegorov/wt/blob/master/wt/templates/atom.xml">atom.xml</a> template for a reference.</p>
+<p>Property to control feed building is named <strong><code>build.feed</code></strong> (see below).</p>
+<h2 id="verification">Verification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
+<pre><code class="yaml">verify:
+    links: true                # Turn local links verification on
+</code></pre>
+
+<p>Verification is a simple measure to prevent type errors in local urls
+references. The rendered page will be parsed for urls and local urls will be
+checked for existance.</p>
+<p>In case local url is not found according to <code>wt.yaml</code> configuration:</p>
+<ul>
+<li>you will have a notice in terminal in <em>development mode</em>
+  (started by <strong><code>wt develop</code></strong>)</li>
+<li>you will have an error and build will stop in <em>build mode</em>
+  (started by <strong><code>wt build</code></strong>)</li>
+</ul>
+<h2 id="build">Build<a class="headerlink" href="#build" title="Permanent link">&para;</a></h2>
+<pre><code class="yaml">build:
+    output: output/     # Output directory for generated content
+    static: true        # Enable static files to be copied to output directory
+    feed: true          # Build feed
+</code></pre>
+
+<ul>
+<li><strong><code>build.output</code></strong>: specifies directory for generated content (content
+  built using <strong><code>wt build</code></strong> command)</li>
+<li><strong><code>build.static</code></strong>: boolean option to tell <strong><code>wt</code></strong> engine to copy
+  static files to output directory
+  (directory for static files sources is specified using
+  <strong><code>directories.static</code></strong> value, see below)</li>
+<li><strong><code>build.feed</code></strong>: boolean option to tell <strong><code>wt</code></strong> engine to build feed</li>
+</ul>
+<h2 id="pagination">Pagination<a class="headerlink" href="#pagination" title="Permanent link">&para;</a></h2>
+<pre><code class="yaml">paginate:
+    by: 10                          # Page size for posts
+    orphans: 2                      # Number of orphans
+    mainpage: true                  # Mainpage will contain paged content
+    url: /page{page_number}.html    # Template for paginated page url
+</code></pre>
+
+<p>Pagination is meant for use by <strong>posts</strong> only. You can control page size,
+number of orphans (to be included on previous page thus avoiding last page
+having too few posts) and url for paginated pages.</p>
+<p>Mainpage of the project (served under <strong><code>/</code></strong> url) can be included in
+pagination too - you will have to set <strong><code>paginate.mainpage</code></strong> option to
+<strong>true</strong> for proper pagination numbering in this case.</p>
+<ul>
+<li><strong><code>paginate.by</code></strong> or <strong><code>paginate.page_size</code></strong>: page size for posts</li>
+<li><strong><code>paginate.orphans</code></strong>: number of orphans to be moved to previous page if
+  needed</li>
+<li><strong><code>paginate.mainpage</code></strong>: boolean option saying mainpage will contain paged
+  content (for proper pagination)</li>
+<li><strong><code>paginate.url</code></strong>: template for paginated pages url, must have
+  <strong><code>{page_number}</code></strong> placeholder, can point to <strong>html</strong> file or to directory
+  (in the latter case target directory will have <strong><code>index.html</code></strong> with content)</li>
+</ul>
+<p>For pagination example please check <a href="/wt/objects/">objects</a> page.</p>
+<h2 id="templates">Templates<a class="headerlink" href="#templates" title="Permanent link">&para;</a></h2>
+<pre><code class="yaml">templates:
+    mainpage: mainpage.html             # Mainpage template name
+    post: content.html                  # Template for posts
+    page: content.html                  # Template for pages
+    feed: atom.xml                      # Template for feed
+</code></pre>
+
+<p>Templates are searched in two directories - in <code>templates</code> directory within
+your project's root folder and in <code>templates</code> directory of <strong><code>wt</code></strong>.</p>
+<p>After running <strong><code>wt init .</code></strong> command you will have three templates copied from
+<strong><code>wt</code></strong> sources: <strong>atom.xml</strong>, <strong>content.html</strong> and <strong>mainpage.html</strong>.
+Base template <strong>base.html</strong> is not copied by default but you can grab it from
+<a href="https://github.com/ysegorov/wt/blob/master/wt/templates/base.html">here</a> or simply create it according to your needs.</p>
+<p>Please check <a href="/wt/templates/">Templates</a> for details.</p>
+<h2 id="directories">Directories<a class="headerlink" href="#directories" title="Permanent link">&para;</a></h2>
+<pre><code class="yaml">directories:
+    static: static/
+</code></pre>
+
+<ul>
+<li><strong><code>directories.static</code></strong>: specifies directory with assets
+  (css/js/images/fonts/etc.) to be served by development server while authoring
+  content and to be copied to output directory on build</li>
+</ul>
+<h2 id="jinja">Jinja<a class="headerlink" href="#jinja" title="Permanent link">&para;</a></h2>
+<pre><code class="yaml">jinja:
+    extensions:                              # List of Jinja extensions
+      - jinja2.ext.i18n
+      - jinja2.ext.do
+      - jinja2.ext.loopcontrols
+      - jinja2.ext.with_
+      - jinja2.ext.autoescape
+...                                          # End marker of yaml document
+</code></pre>
+
+<p>Jinja supports <a href="http://jinja.pocoo.org/docs/2.9/extensions/">extensions</a> so we can extend it when needed.
+Besides extensions you can register custom filters or functions providing
+importable <strong><code>jinja_helpers.py</code></strong> module.</p>
+<p>Please check <a href="/wt/templates/">Templates</a> page for information about jinja
+extensions, added to templates context by <code>wt</code> engine.</p>
+<h2 id="whats-next">What's next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>Let's continue with <a href="/wt/content/">Content</a> topic.</p>
+
+                </div>
+                <div class="non-flexy width-225 b-left bc-white-50 sidebar" role="navigation">
+                    
+<div class="pl-normal b-bottom bc-white-50">
+    <h3 class="">Table of Contents</h3>
+    <div class="toc">
+<ul>
+<li><a href="#configuration">Configuration</a><ul>
+<li><a href="#generic-information">Generic information</a><ul>
+<li><a href="#baseurl">Baseurl</a></li>
+</ul>
+</li>
+<li><a href="#feed">Feed</a></li>
+<li><a href="#verification">Verification</a></li>
+<li><a href="#build">Build</a></li>
+<li><a href="#pagination">Pagination</a></li>
+<li><a href="#templates">Templates</a></li>
+<li><a href="#directories">Directories</a></li>
+<li><a href="#jinja">Jinja</a></li>
+<li><a href="#whats-next">What's next</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="pl-normal pb-normal b-bottom bc-white-50">
+    <h3 class="">Next Topic</h3>
+    <a href="/wt/content/">Content</a>
+</div>
+
+                    <div class="pl-normal b-bottom bc-white-50">
+    <h3 class="">Download</h3>
+    <p>Current version: <a href="https://pypi.org/projects/wt/"><img src="https://img.shields.io/pypi/v/wt.svg?style=flat-square" alt="pypi badge"></a></p>
+    <p>Install with:<br>
+        <pre><code class="pt-tiny pb-tiny">pip install -U wt</code></pre>
+    </p>
+</div>
+<div class="pl-normal b-bottom bc-white-50">
+    <h3 class="">Questions? Suggestions?</h3>
+    <p>Please open an issue at the project's <a href="https://github.com/ysegorov/wt/issues">issue tracker</a>.</p>
+</div>
+                </div>
+            </div>
+            <div class="wrapper pt-normal b-top bc-white-50 text-center text-italic fs-small" role="contentinfo">
+                The content of this site is licensed under <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> license. Created using <strong>wt</strong> 2.0.0.
+            </div>
+        </div>
+
+        
+        <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="/wt/js/highlight.pack.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+        <script>
+            (function (root) {
+                'use strict';
+                var hash = root.location.hash.slice(1),
+                    doc = root.document;
+                if (hash) {
+                    setTimeout(function () {
+                        var el = doc.getElementById(hash);
+                        if (el) {
+                            el.scrollIntoView(true);
+                        }
+                    }, 100);
+                }
+            })(window);
+        </script>
+        
+
+        
+        
+        
+    </body>
+</html>

@@ -1,0 +1,249 @@
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Objects | WT documentation</title>
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+        
+
+        
+        <!-- Place favicon.ico in the root directory -->
+
+        
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:400,700,400italic,Kreon:400,700">
+        <link rel="stylesheet" href="/wt/css/wt.css?ts=1543143183">
+        <link rel="stylesheet" href="/wt/css/hljs/zenburn.css?ts=1543143183">
+        
+    </head>
+    <body class="bg-base bg-lines">
+        <div class="gray-192 width-900 ml-auto mr-auto p-normal bg-base-75">
+            <div class="flex flex-items-end bg-base b-bottom bc-white-50 bw-3">
+                <div class="flex-non-grow flex-shrink flex-basis-auto ph-normal">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="wt-logo width-125 height-125" viewBox="0 0 16.933333 16.933333">
+    <g>
+        <path class="wt-logo-line" d="M.53 14.544h15.874"/>
+        <path class="wt-logo-symb" d="M10.322 2.256l-1.786.546.086.283c.149-.033.27-.025.363.025.095.046.166.143.212.291.028.094.049.213.061.356.012.14.018.282.018.426L9.26 7.358 6.92 3.296l-.968.296.106 4.744-1.65-2.75c-.181-.294-.295-.517-.34-.669a.376.376 0 0 1 .02-.31c.052-.088.15-.163.293-.225l-.086-.283-2.305.704.087.283a.643.643 0 0 1 .258.033c.074.028.15.08.226.156.076.076.182.222.316.437l2.755 4.403 1.071-.328-.081-4.372L8.82 9.141l1.02-.312.17-5.185c.01-.275.027-.474.052-.597a.82.82 0 0 1 .119-.303.631.631 0 0 1 .227-.205zm2.249 3.095l-2.313.707.276.903c.212-.012.44-.015.682-.007.247.006.452.04.615.1.164.066.298.159.402.28.105.122.197.315.278.579l.163.534-6.57 2.008c-.21.064-.39.112-.54.143a.905.905 0 0 1-.379.008.564.564 0 0 1-.292-.177 1.864 1.864 0 0 1-.251-.399l-.435.134L5.32 13.8l.435-.133a1.856 1.856 0 0 1-.027-.396.965.965 0 0 1 .06-.249.676.676 0 0 1 .147-.181.97.97 0 0 1 .267-.161c.12-.051.295-.112.528-.183l6.57-2.009.145.475a2.4 2.4 0 0 1 .1.444.94.94 0 0 1 0 .31.925.925 0 0 1-.093.26 1.21 1.21 0 0 1-.194.26 1.76 1.76 0 0 1-.306.274 13.49 13.49 0 0 1-.598.4l.276.902 2.313-.707z"/>
+    </g>
+</svg>
+                </div>
+                <div class="flexy flex flex-column">
+                    <div class="serif text-italic text-right fs-medium pb-huge">
+                        Yet Another Static Site Generator
+                    </div>
+                    <div class="flex flex-justify-end mb-small">
+                        <a href="/wt/" class="ib ph-normal pv-small text-no-underline blue hover-white hover-bg-blue">Home</a>
+                        <a href="/wt/contents/" class="ib ph-normal pv-small text-no-underline blue hover-white hover-bg-blue">Docs</a>
+                        <a href="/wt/" class="ib ph-normal pv-small text-no-underline blue hover-white hover-bg-blue">Develop</a>
+                    </div>
+                </div>
+            </div>
+            <div class="flex wrapper">
+                <div class="flexy pr-normal of-auto" role="main">
+                    
+<h1 id="objects">Objects<a class="headerlink" href="#objects" title="Permanent link">&para;</a></h1>
+<p><code>wt</code> engine has several simple objects representing
+<a href="/wt/configuration/">configuration</a> and <a href="/wt/content/">content</a> data.</p>
+<p>For a list of <strong>posts</strong> <code>wt</code> uses simple <code>Paginator</code> object providing useful
+pagination attributes.</p>
+<p>Let's check these objects.</p>
+<h2 id="config">Config<a class="headerlink" href="#config" title="Permanent link">&para;</a></h2>
+<p>This is an object to hold configuration data loaded from <strong>wt.yaml</strong> file and
+there is nothing special about it.</p>
+<p>It is available within templates as <code>config</code> variable and allows access to
+<strong>wt.yaml</strong> values using dot notation.</p>
+<p>For example, following <strong>wt.yaml</strong> data:</p>
+<pre><code class="yaml">
+title: Site title
+mainpage:
+    subtitle: Mainpage subtitle
+
+</code></pre>
+
+<p>can be accessed in template as:</p>
+<pre><code class="jinja">
+&lt;h1&gt;{{ config.title }}&lt;/h1&gt;
+&lt;h2&gt;{{ config.mainpage.subtitle }}&lt;/h2&gt;
+
+</code></pre>
+
+<h2 id="content">Content<a class="headerlink" href="#content" title="Permanent link">&para;</a></h2>
+<p>This is an object to hold <strong>page</strong> or <strong>post</strong> data loaded from correspondent
+directory (<code>content/pages/</code> for <strong>page</strong> and <code>content/posts/</code> for <strong>post</strong>).</p>
+<p>This object will hold all properties defined within front matter of the source
+file and following special properties:</p>
+<ul>
+<li><strong><code>content.text</code></strong> - file content (everything except front matter if specified),</li>
+<li><strong><code>content.mtime</code></strong> - file modification time (used as fallback value for <code>modified</code>
+    property in case <code>modified</code> is not specified within front matter),</li>
+<li><strong><code>content.prev</code></strong> - link to previous <strong>post</strong> in the list of <code>posts</code> variable within
+    templates (this property is available <strong>only</strong> for <strong>post</strong> and <strong>only</strong>
+    within <strong>list of posts</strong>),</li>
+<li><strong><code>content.next</code></strong> - link to next <strong>post</strong> in the list of <code>posts</code> variable within
+    templates (this property is available <strong>only</strong> for <strong>post</strong> and <strong>only</strong>
+    within <strong>list of posts</strong>).</li>
+</ul>
+<p>These and all other properties, loaded from front matter, can be accessed using
+dot notation.</p>
+<p>Here is an example of page file:</p>
+<pre><code class="yaml">
+---
+title: About
+url: /about/
+modified: 2018-10-10T09:10:00Z
+template: about.html
+---
+
+# About
+
+This is the page about our company.
+
+...
+
+</code></pre>
+
+<p>and template to render it:</p>
+<pre><code class="jinja">
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;{{ content.title }}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;{{ content.title }}&lt;/h1&gt;
+    &lt;div id=&quot;content&quot;&gt;{{ markdown(content.text) }}&lt;/div&gt;
+    &lt;div id=&quot;footer&quot;&gt;Modified at {{ content.modified }}&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</code></pre>
+
+<h2 id="paginator">Paginator<a class="headerlink" href="#paginator" title="Permanent link">&para;</a></h2>
+<p>Let's check <code>paginator</code> object's attributes:</p>
+<ul>
+<li><strong><code>paginator.items</code></strong> - list of current page <strong>post</strong> items,</li>
+<li><strong><code>paginator.has_prev</code></strong> - boolean attribute indicating previous page exists,</li>
+<li><strong><code>paginator.has_next</code></strong> - boolean attribute indicating next page exists,</li>
+<li><strong><code>paginator.prev_page</code></strong> - pair of <strong><code>(page_url, page_number)</code></strong> values for
+  previous page,</li>
+<li><strong><code>paginator.next_page</code></strong> - pair of <strong><code>(page_url, page_number)</code></strong> values for
+  next page,</li>
+<li><strong><code>paginator.first_page</code></strong> - pair of <strong><code>(page_url, page_number)</code></strong> values for
+  first page,</li>
+<li><strong><code>paginator.last_page</code></strong> - pair of <strong><code>(page_url, page_number)</code></strong> values for
+  last page,</li>
+<li><strong><code>paginator.num_pages</code></strong> - number of pages,</li>
+<li><strong><code>paginator.pages</code></strong> - ordered dictionary of <strong><code>(page_url, page_number)</code></strong>
+  pairs.</li>
+</ul>
+<p>Here is a <a href="https://github.com/ysegorov/blog/blob/master/templates/mainpage.html#L19-L49">real-life example</a> of pagination in action:</p>
+<pre><code class="html">
+{% for post in paginator.items %}
+&lt;article class=&quot;blog-post&quot;&gt;
+    &lt;header class=&quot;blog-post-header&quot;&gt;
+        &lt;h2 class=&quot;blog-post-title&quot;&gt;&lt;a class=&quot;blog-post-link&quot; href=&quot;{{ post.url }}&quot; title=&quot;{{ post.title }}&quot;&gt;{{ post.title }}&lt;/a&gt;&lt;/h2&gt;
+    &lt;/header&gt;
+    &lt;footer class=&quot;blog-post-footer&quot;&gt;
+        &lt;span class=&quot;blog-post-published&quot;&gt;{{ post.published.strftime(&quot;%A, %d %B %Y&quot;) if post.published else post.modified.strftime(&quot;%A, %d %B %Y&quot;) }}&lt;/span&gt;
+    &lt;/footer&gt;
+&lt;/article&gt;
+{% endfor %}
+
+{% if paginator.has_prev or paginator.has_next %}
+&lt;div class=&quot;content-prev-next&quot;&gt;
+    &lt;div class=&quot;content-prev&quot;&gt;
+    {% if paginator.has_prev %}
+        {% set url, num = paginator.prev_page %}
+        &lt;a class=&quot;content-prev-link&quot; href=&quot;{{ url }}&quot;&gt;
+            &lt;i class=&quot;fa fa-angle-double-left fa-fw&quot;&gt;&lt;/i&gt;&lt;span class=&quot;ib&quot;&gt;previous&lt;/span&gt;
+        &lt;/a&gt;
+    {%- endif %}
+    &lt;/div&gt;
+    &lt;div class=&quot;content-next&quot;&gt;
+    {% if paginator.has_next %}
+        {% set url, num = paginator.next_page %}
+        &lt;a class=&quot;content-next-link&quot; href=&quot;{{ url }}&quot;&gt;
+            &lt;span class=&quot;ib&quot;&gt;next&lt;/span&gt;&lt;i class=&quot;fa fa-angle-double-right fa-fw&quot;&gt;&lt;/i&gt;
+        &lt;/a&gt;
+    {%- endif %}
+    &lt;/div&gt;
+&lt;/div&gt;
+{% endif %}
+
+</code></pre>
+
+<h2 id="whats-next">What's next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>Let's continue with <a href="/wt/cli/">Command-line interface</a> topic.</p>
+
+                </div>
+                <div class="non-flexy width-225 b-left bc-white-50 sidebar" role="navigation">
+                    
+<div class="pl-normal b-bottom bc-white-50">
+    <h3 class="">Table of Contents</h3>
+    <div class="toc">
+<ul>
+<li><a href="#objects">Objects</a><ul>
+<li><a href="#config">Config</a></li>
+<li><a href="#content">Content</a></li>
+<li><a href="#paginator">Paginator</a></li>
+<li><a href="#whats-next">What's next</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="pl-normal pb-normal b-bottom bc-white-50">
+    <h3 class="">Next Topic</h3>
+    <a href="/wt/cli/">Command-line Interface</a>
+</div>
+
+                    <div class="pl-normal b-bottom bc-white-50">
+    <h3 class="">Download</h3>
+    <p>Current version: <a href="https://pypi.org/projects/wt/"><img src="https://img.shields.io/pypi/v/wt.svg?style=flat-square" alt="pypi badge"></a></p>
+    <p>Install with:<br>
+        <pre><code class="pt-tiny pb-tiny">pip install -U wt</code></pre>
+    </p>
+</div>
+<div class="pl-normal b-bottom bc-white-50">
+    <h3 class="">Questions? Suggestions?</h3>
+    <p>Please open an issue at the project's <a href="https://github.com/ysegorov/wt/issues">issue tracker</a>.</p>
+</div>
+                </div>
+            </div>
+            <div class="wrapper pt-normal b-top bc-white-50 text-center text-italic fs-small" role="contentinfo">
+                The content of this site is licensed under <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> license. Created using <strong>wt</strong> 2.0.0.
+            </div>
+        </div>
+
+        
+        <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="/wt/js/highlight.pack.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+        <script>
+            (function (root) {
+                'use strict';
+                var hash = root.location.hash.slice(1),
+                    doc = root.document;
+                if (hash) {
+                    setTimeout(function () {
+                        var el = doc.getElementById(hash);
+                        if (el) {
+                            el.scrollIntoView(true);
+                        }
+                    }, 100);
+                }
+            })(window);
+        </script>
+        
+
+        
+        
+        
+    </body>
+</html>
