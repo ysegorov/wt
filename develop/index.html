@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Command-line Interface | WT documentation</title>
+        <title>wt development | WT documentation</title>
         
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,8 +20,8 @@
         
         <link rel="dns-prefetch" href="//fonts.googleapis.com">
         <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:400,700,400italic,Kreon:400,700">
-        <link rel="stylesheet" href="/wt/css/wt.css?ts=1543204451">
-        <link rel="stylesheet" href="/wt/css/hljs/zenburn.css?ts=1543204451">
+        <link rel="stylesheet" href="/wt/css/wt.css?ts=1543204450">
+        <link rel="stylesheet" href="/wt/css/hljs/zenburn.css?ts=1543204450">
         
     </head>
     <body class="bg-base bg-lines">
@@ -50,83 +50,121 @@
             <div class="flex wrapper">
                 <div class="flexy pr-normal of-auto" role="main">
                     
-<h1 id="command-line-interface">Command-line Interface<a class="headerlink" href="#command-line-interface" title="Permanent link">&para;</a></h1>
-<p>Command-line interface of the library is simple and contains just three
-commands:</p>
+<h1 id="wt-development">wt development<a class="headerlink" href="#wt-development" title="Permanent link">&para;</a></h1>
+<p><code>wt</code> sources are available on <a href="https://github.com/ysegorov/wt/">GitHub</a>. You can raise issue or feature
+request in the <a href="https://github.com/ysegorov/wt/issues">issue tracker</a>.</p>
+<p>The recommended way to submit code to <code>wt</code> or to update <code>wt</code> docs is to fork
+the repository on GitHub, commit the changes and submit a pull request.</p>
+<p>You can use <a href="https://github.com/ysegorov/wt-dev/">wt-dev</a> repository aimed to ease the development process.</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<p>You must have <strong>python3</strong> (for <code>wt</code>) and <strong>nodejs</strong> alongside with <strong>npm</strong> or
+<strong>yarn</strong> (for <code>wt</code> docs) installed locally for development.</p>
+<h2 id="hack-wt">Hack wt<a class="headerlink" href="#hack-wt" title="Permanent link">&para;</a></h2>
+<p>These are the basic steps needed to hack <code>wt</code>:</p>
+<ol>
+<li>
+<p>Create GitHub account (in case you don't have it yet).</p>
+</li>
+<li>
+<p>Fork <a href="https://github.com/ysegorov/wt/">wt</a> repository using GitHub interface.</p>
+</li>
+<li>
+<p>Clone <a href="https://github.com/ysegorov/wt-dev/">wt-dev</a> repository locally:</p>
+<pre><code>$ cd ~/dev
+$ git clone https://github.com/ysegorov/wt-dev.git
+$ cd wt-dev
+</code></pre>
+</li>
+<li>
+<p>Create and activate virtual environment:</p>
+<pre><code>$ python3 -m venv env
+$ source env/bin/activate
+</code></pre>
+</li>
+<li>
+<p>Install <code>wt</code> from forked repository (replace <code>USERNAME</code> with your GitHub
+   account username) in <em>editable</em> mode:</p>
+<pre><code>$ pip install -e git+https://github.com/USERNAME/wt.git#egg=wt[dev]
+</code></pre>
+</li>
+<li>
+<p>Change your directory to <code>wt</code> sources, get familiar with project structure
+   and hack:</p>
+<pre><code>$ cd env/src/wt/
+</code></pre>
+</li>
+<li>
+<p>Test your changes and add missing tests if needed:</p>
+<pre><code>$ pytest
+</code></pre>
+</li>
+<li>
+<p>Commit your changes providing useful commit message:</p>
+<pre><code>$ git commit -m "Added new feature: possibility to reach the Moon in
+one step"
+</code></pre>
+</li>
+<li>
+<p>Push your changes to GitHub:</p>
+<pre><code>$ git push
+</code></pre>
+</li>
+<li>
+<p>Create a pull request from your forked repository to <a href="https://github.com/ysegorov/wt/">wt</a> repository.</p>
+</li>
+</ol>
+<h2 id="hack-wt-documentation">Hack wt documentation<a class="headerlink" href="#hack-wt-documentation" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p>Follow steps 1-5 from <a href="#hack-wt">Hack wt</a> section.</p>
+</li>
+<li>
+<p>Install <code>honcho</code> to automate docs related tasks:</p>
+<pre><code>$ pip install honcho
+</code></pre>
+<p><code>honcho</code> will help to:</p>
 <ul>
-<li><strong>init</strong> - to initialize your project,</li>
-<li><strong>develop</strong> - for authoring (<em>development</em> mode),</li>
-<li><strong>build</strong> - to build your project (<em>production</em> mode).</li>
+<li>run <strong>css</strong> changes watcher to automate docs styles rebuild process,</li>
+<li>run docs development mode http server.</li>
 </ul>
-<p>You can get help by running <strong><code>wt -h</code></strong> in terminal:</p>
-<pre><code class="bash">
-$ wt -h
-usage: wt [-h] [-c wt.yaml] {init,develop,build} ...
-
-Command-line interface to static site generator
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -c wt.yaml, --conf wt.yaml
-                        configuration file (defaults to wt.yaml in current
-                        directory)
-
-commands:
-  {init,develop,build}
-    init                bootstrap project structure
-    develop             start simple http server for development
-    build               build site
-
+</li>
+<li>
+<p>Install <code>nodejs</code> packages used to (re)generate <code>wt</code> documentation
+   <strong>css</strong> styles:</p>
+<pre><code>$ npm install
 </code></pre>
-
-<h2 id="wt-init">wt init<a class="headerlink" href="#wt-init" title="Permanent link">&para;</a></h2>
-<p><strong><code>wt init</code></strong> command requires one positional argument - <code>path</code> to folder to
-bootstrap project in:</p>
-<pre><code class="bash">
-$ wt init -h
-usage: wt init [-h] path
-
-positional arguments:
-  path        path to folder to bootstrap in
-
-optional arguments:
-  -h, --help  show this help message and exit
-
+<p>or:</p>
+<pre><code>$ yarn install
 </code></pre>
-
-<h2 id="wt-develop">wt develop<a class="headerlink" href="#wt-develop" title="Permanent link">&para;</a></h2>
-<p><strong><code>wt develop</code></strong> command has two optional parameters
-<strong><code>--host</code></strong> and <strong><code>--port</code></strong>:</p>
-<pre><code class="bash">
-$ wt develop -h
-usage: wt develop [-h] [--host HOST] [--port PORT]
-
-optional arguments:
-  -h, --help   show this help message and exit
-  --host HOST  address to run server at (defaults to 127.0.0.1)
-  --port PORT  port to bind server to (defaults to 9000)
-
+</li>
+<li>
+<p>Run <code>d</code> helper:</p>
+<pre><code>$ ./d
 </code></pre>
-
-<p>Development server will serve pages generating response on the fly (without
-writing any html file). Internally before serving the request it will check if
-your project's <a href="/wt/configuration/">configuration</a> file has been changed and will
-automatically reload it if needed.</p>
-<p>Static files are served by development server too.</p>
-<h2 id="wt-build">wt build<a class="headerlink" href="#wt-build" title="Permanent link">&para;</a></h2>
-<p><strong><code>wt build</code></strong> command doesn't have any optional arguments:</p>
-<pre><code class="bash">
-$ wt build -h
-usage: wt build [-h]
-
-optional arguments:
-  -h, --help  show this help message and exit
-
+<p>and navigate to <a href="http://127.0.0.1:9100/">http://127.0.0.1:9100/</a> in your
+browser to check generated <code>wt</code> docs.
+Hit <code>Ctrl-C</code> to stop <code>d</code> helper.</p>
+</li>
+<li>
+<p>Edit <code>wt</code> documentation as needed (you can do it using editor of your
+   choice) and check generated results in browser.</p>
+<p>Documention sources are located in <code>env/src/wt/docs/</code> directory.</p>
+</li>
+<li>
+<p>Commit your changes providing useful commit message:</p>
+<pre><code>$ git commit -m "Updated docs: added instruction how to reach the Moon
+in one step"
 </code></pre>
-
-<h2 id="whats-next">What's next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
-<p>That's it for command-line interface and for <code>wt</code>.</p>
-<p>Happy authoring!</p>
+</li>
+<li>
+<p>Push your changes to GitHub:</p>
+<pre><code>$ git push
+</code></pre>
+</li>
+<li>
+<p>Create a pull request from your forked repository to <a href="https://github.com/ysegorov/wt/">wt</a> repository.</p>
+</li>
+</ol>
 
                 </div>
                 <div class="non-flexy width-225 b-left bc-white-50 sidebar" role="navigation">
@@ -135,21 +173,17 @@ optional arguments:
     <h3 class="">Table of Contents</h3>
     <div class="toc">
 <ul>
-<li><a href="#command-line-interface">Command-line Interface</a><ul>
-<li><a href="#wt-init">wt init</a></li>
-<li><a href="#wt-develop">wt develop</a></li>
-<li><a href="#wt-build">wt build</a></li>
-<li><a href="#whats-next">What's next</a></li>
+<li><a href="#wt-development">wt development</a><ul>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#hack-wt">Hack wt</a></li>
+<li><a href="#hack-wt-documentation">Hack wt documentation</a></li>
 </ul>
 </li>
 </ul>
 </div>
 
 </div>
-<div class="pl-normal pb-normal b-bottom bc-white-50">
-    <h3 class="">Next Topic</h3>
-    <a href="/wt/changelog/">Changelog</a>
-</div>
+
 
                     <div class="pl-normal b-bottom bc-white-50">
     <h3 class="">Download</h3>
