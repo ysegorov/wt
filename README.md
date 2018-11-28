@@ -2,7 +2,8 @@
 
 ![Logo](misc/logo96.png)
 
-[![Build Status](https://travis-ci.org/ysegorov/wt.svg?branch=master)](https://travis-ci.org/ysegorov/wt)
+[![Current Version](https://img.shields.io/pypi/v/wt.svg?style=flat-square)](https://pypi.org/projects/wt/)
+[![Build Status](https://img.shields.io/travis/ysegorov/wt/master.svg?style=flat-square)](https://travis-ci.org/ysegorov/wt)
 
 
 ## What
