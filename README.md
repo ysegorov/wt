@@ -8,25 +8,26 @@
 
 ## What
 
-Pretty small and simplified static blog generator with following features:
+Yet another static blog generator with following features:
 
 - [markdown][markdown] for content
-- [yaml][yaml] for project configuration
-- [jinja2][jinja2] for templating
+- [yaml][yaml] for configuration
+- [jinja2][jinja2] for templates
 - [atom][atom] for feed
-- python's standard library `HTTPServer` as a development http server
-- only two types of content - **page** and **post**
-- [yaml front matter][front-matter] for content metadata
-- have sensible defaults for content sources
+- two types of content - **page** and **post**
+- [yaml][yaml]-formatted front matter for content metadata
+- simple `HTTPServer` for development
 
 
 ## Why
 
-While [pelican][pelican] is great and is full of features and [grow][grow] is
-another one and looks very interesting in this field and there are a lot more
-static site generators I wanted to create something easy to work with.
+It was curiosity - "how would I do it?" and good intentions - "let's create
+something easy to work with".
 
-Hope someday somebody will find this library pretty usefull.
+
+## Documentation
+
+`wt` documentation is available [online][wt-docs].
 
 
 ## How
@@ -92,5 +93,4 @@ MIT
 [front-matter]: https://jekyllrb.com/docs/front-matter/
 [jinja2]: http://jinja.pocoo.org/
 [atom]: https://en.wikipedia.org/wiki/Atom_(standard)
-[pelican]: http://docs.getpelican.com/
-[grow]: https://grow.io/
+[wt-docs]: https://ysegorov.github.io/wt/
