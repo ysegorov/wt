@@ -8,7 +8,7 @@ order: 8
 # Changelog
 
 
-## 2.0.0 (in development)
+## 2.0.0 (2018-11-28)
 
 ### Breaking changes
 
