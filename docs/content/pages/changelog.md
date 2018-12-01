@@ -8,6 +8,14 @@ order: 8
 # Changelog
 
 
+## 2.0.1 (2018-12-01)
+
+### Changes
+
+- fixed issue with bad return value for `{{ baseurl(url) }}` call in templates
+    in case `baseurl` value is not configured in `wt.yaml` (#44)
+
+
 ## 2.0.0 (2018-11-28)
 
 ### Breaking changes
