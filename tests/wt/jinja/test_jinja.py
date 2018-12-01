@@ -72,6 +72,22 @@ def describe_Baseurl():
 
         assert u(url) == '/foo/baz'
 
+    def must_return_url_if_baseurl_is_None():
+
+        url = '/baz'
+
+        u = jinja.Baseurl(None)
+
+        assert u(url) == url
+
+    def must_return_url_if_baseurl_is_empty():
+
+        url = '/baz'
+
+        u = jinja.Baseurl('')
+
+        assert u(url) == url
+
 
 def describe_get_env():
 

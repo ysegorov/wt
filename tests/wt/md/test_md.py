@@ -21,6 +21,15 @@ def describe_BaseurlTreeprocessor():
         assert 'href="/bar/"' in html
         assert 'src="/logo96.png"' in html
 
+    def must_not_prepend_baseurl_if_it_is_None(markdown_function_factory,
+                                               markdown_content):
+        fltr = markdown_function_factory(None)
+
+        html = fltr(markdown_content)
+
+        assert 'href="/bar/"' in html
+        assert 'src="/logo96.png"' in html
+
     def must_prepend_baseurl_if_it_is_not_empty(markdown_function_factory,
                                                 markdown_content):
         fltr = markdown_function_factory('/base-url')

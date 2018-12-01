@@ -30,6 +30,8 @@ class Baseurl(object):
         self.baseurl = baseurl
 
     def __call__(self, url):
+        if not self.baseurl:
+            return url
         return '{}{}'.format(self.baseurl, url)
 
 
