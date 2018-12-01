@@ -20,8 +20,8 @@
         
         <link rel="dns-prefetch" href="//fonts.googleapis.com">
         <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:400,700,400italic,Kreon:400,700">
-        <link rel="stylesheet" href="/wt/css/wt.css?ts=1543373912">
-        <link rel="stylesheet" href="/wt/css/hljs/zenburn.css?ts=1543373912">
+        <link rel="stylesheet" href="/wt/css/wt.css?ts=1543641398">
+        <link rel="stylesheet" href="/wt/css/hljs/zenburn.css?ts=1543641398">
         
     </head>
     <body class="bg-base bg-lines">
@@ -51,6 +51,12 @@
                 <div class="flexy pr-normal of-auto" role="main">
                     
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="201-2018-12-01">2.0.1 (2018-12-01)<a class="headerlink" href="#201-2018-12-01" title="Permanent link">&para;</a></h2>
+<h3 id="changes">Changes<a class="headerlink" href="#changes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>fixed issue with bad return value for <code>{{ baseurl(url) }}</code> call in templates
+    in case <code>baseurl</code> value is not configured in <code>wt.yaml</code> (#44)</li>
+</ul>
 <h2 id="200-2018-11-28">2.0.0 (2018-11-28)<a class="headerlink" href="#200-2018-11-28" title="Permanent link">&para;</a></h2>
 <h3 id="breaking-changes">Breaking changes<a class="headerlink" href="#breaking-changes" title="Permanent link">&para;</a></h3>
 <ul>
@@ -61,7 +67,7 @@
 <li>dropped support for <code>feed_domain</code> rendering context variable in favour of
   <code>host</code> variable (#41)</li>
 </ul>
-<h3 id="changes">Changes<a class="headerlink" href="#changes" title="Permanent link">&para;</a></h3>
+<h3 id="changes_1">Changes<a class="headerlink" href="#changes_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li>pages without or empty <code>url</code> definition in front matter are skipped (#34)</li>
 <li>slightly optimized <code>WT.render</code> method (build <code>posts</code> list only once per
@@ -81,13 +87,13 @@
 <li>added support for yaml-formatted content front matter (#30)</li>
 </ul>
 <h2 id="052-2018-08-02">0.5.2 (2018-08-02)<a class="headerlink" href="#052-2018-08-02" title="Permanent link">&para;</a></h2>
-<h3 id="changes_1">Changes<a class="headerlink" href="#changes_1" title="Permanent link">&para;</a></h3>
+<h3 id="changes_2">Changes<a class="headerlink" href="#changes_2" title="Permanent link">&para;</a></h3>
 <ul>
 <li>package rebuild using latest wheel and twine to use readme in markdown
   format on pypi.org</li>
 </ul>
 <h2 id="051-2018-08-02">0.5.1 (2018-08-02)<a class="headerlink" href="#051-2018-08-02" title="Permanent link">&para;</a></h2>
-<h3 id="changes_2">Changes<a class="headerlink" href="#changes_2" title="Permanent link">&para;</a></h3>
+<h3 id="changes_3">Changes<a class="headerlink" href="#changes_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li>minor fix for pypi targeted readme in markdown format</li>
 </ul>
@@ -97,7 +103,7 @@
 <li>allow class-based filters and function for jinja customization (#27)</li>
 <li>wt documentation is <a href="https://ysegorov.github.io/wt-docs/">online</a> (#1)</li>
 </ul>
-<h3 id="changes_3">Changes<a class="headerlink" href="#changes_3" title="Permanent link">&para;</a></h3>
+<h3 id="changes_4">Changes<a class="headerlink" href="#changes_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li>switch to <code>http.server.HTTPServer</code> as a development http server (#29)</li>
 </ul>
@@ -111,12 +117,12 @@
 <li>yaml configuration can be splitted into multiple files (#23)</li>
 <li>wt logo</li>
 </ul>
-<h3 id="changes_4">Changes<a class="headerlink" href="#changes_4" title="Permanent link">&para;</a></h3>
+<h3 id="changes_5">Changes<a class="headerlink" href="#changes_5" title="Permanent link">&para;</a></h3>
 <ul>
 <li>tests rewritten using pytest-describe plugin (#24)</li>
 </ul>
 <h2 id="031-2017-03-21">0.3.1 (2017-03-21)<a class="headerlink" href="#031-2017-03-21" title="Permanent link">&para;</a></h2>
-<h3 id="changes_5">Changes<a class="headerlink" href="#changes_5" title="Permanent link">&para;</a></h3>
+<h3 id="changes_6">Changes<a class="headerlink" href="#changes_6" title="Permanent link">&para;</a></h3>
 <ul>
 <li>minor fix for pypi targeted readme translation from md to rst
   (<code>pypandoc</code> was not installed in virtualenv during build)</li>
@@ -134,7 +140,7 @@
 <li>added option to skip feed rendering (#7)</li>
 <li>added pagination for posts (mainpage) list (#2)</li>
 </ul>
-<h3 id="changes_6">Changes<a class="headerlink" href="#changes_6" title="Permanent link">&para;</a></h3>
+<h3 id="changes_7">Changes<a class="headerlink" href="#changes_7" title="Permanent link">&para;</a></h3>
 <ul>
 <li>render mainpage only once in case mainpage content is in pages (#8)</li>
 </ul>
@@ -157,9 +163,13 @@
     <div class="toc">
 <ul>
 <li><a href="#changelog">Changelog</a><ul>
+<li><a href="#201-2018-12-01">2.0.1 (2018-12-01)</a><ul>
+<li><a href="#changes">Changes</a></li>
+</ul>
+</li>
 <li><a href="#200-2018-11-28">2.0.0 (2018-11-28)</a><ul>
 <li><a href="#breaking-changes">Breaking changes</a></li>
-<li><a href="#changes">Changes</a></li>
+<li><a href="#changes_1">Changes</a></li>
 </ul>
 </li>
 <li><a href="#100-2018-09-04">1.0.0 (2018-09-04)</a><ul>
@@ -168,31 +178,31 @@
 </ul>
 </li>
 <li><a href="#052-2018-08-02">0.5.2 (2018-08-02)</a><ul>
-<li><a href="#changes_1">Changes</a></li>
+<li><a href="#changes_2">Changes</a></li>
 </ul>
 </li>
 <li><a href="#051-2018-08-02">0.5.1 (2018-08-02)</a><ul>
-<li><a href="#changes_2">Changes</a></li>
+<li><a href="#changes_3">Changes</a></li>
 </ul>
 </li>
 <li><a href="#050-2018-08-02">0.5.0 (2018-08-02)</a><ul>
 <li><a href="#features-added_1">Features added</a></li>
-<li><a href="#changes_3">Changes</a></li>
+<li><a href="#changes_4">Changes</a></li>
 </ul>
 </li>
 <li><a href="#040-2017-03-28">0.4.0 (2017-03-28)</a><ul>
 <li><a href="#breaking-changes_2">Breaking changes</a></li>
 <li><a href="#features-added_2">Features added</a></li>
-<li><a href="#changes_4">Changes</a></li>
+<li><a href="#changes_5">Changes</a></li>
 </ul>
 </li>
 <li><a href="#031-2017-03-21">0.3.1 (2017-03-21)</a><ul>
-<li><a href="#changes_5">Changes</a></li>
+<li><a href="#changes_6">Changes</a></li>
 </ul>
 </li>
 <li><a href="#030-2017-03-21">0.3.0 (2017-03-21)</a><ul>
 <li><a href="#features-added_3">Features added</a></li>
-<li><a href="#changes_6">Changes</a></li>
+<li><a href="#changes_7">Changes</a></li>
 </ul>
 </li>
 <li><a href="#020-2016-10-05">0.2.0 (2016-10-05)</a><ul>
