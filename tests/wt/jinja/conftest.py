@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sys
-
 import pytest
 
 from wt import jinja
@@ -47,7 +45,5 @@ def jinja_env_with_helpers(tmpdir):
     jinja_filters = tmpdir.join('jinja_helpers.py')
     jinja_filters.write(JINJA_HELPERS)
 
-    sys.path.insert(0, str(tmpdir))
     env = jinja.get_env(str(tmpdir))
-    yield env
-    sys.path.pop(0)
+    return env

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import importlib.util
 
 import jinja2
 
@@ -46,10 +47,11 @@ def get_env(workdir, baseurl='', **config):
     env = jinja2.Environment(loader=loader, **config)
     env.add_extension('jinja2.ext.autoescape')
 
-    try:
-        import jinja_helpers  # noqa
-    except ImportError:
-        pass
+    helpers = os.path.join(workdir, 'jinja_helpers.py')
+    if os.path.isfile(helpers):
+        spec = importlib.util.spec_from_file_location('jinja_helpers', helpers)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
 
     for fn in filters:
         if not hasattr(fn, 'filter_name') and not hasattr(fn, '__name__'):
