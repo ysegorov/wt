@@ -8,6 +8,12 @@ order: 8
 # Changelog
 
 
+## 2.1.0 (2018-12-06)
+
+- `jinja_helpers.py` module will be imported from project workdir (if exists)
+    without relying on `sys.path` (#45)
+
+
 ## 2.0.1 (2018-12-01)
 
 ### Changes
