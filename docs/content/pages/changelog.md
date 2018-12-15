@@ -8,7 +8,16 @@ order: 8
 # Changelog
 
 
+## 2.1.1 (2018-12-15)
+
+### Changes
+
+- properly detect `wt.yaml` changes and autoreload engine if needed (#46)
+
+
 ## 2.1.0 (2018-12-06)
+
+### Changes
 
 - `jinja_helpers.py` module will be imported from project workdir (if exists)
     without relying on `sys.path` (#45)
