@@ -36,9 +36,13 @@ SERVER_ERROR = string.Template(
 class Server(HTTPServer):  # pragma: no cover
 
     def __init__(self, config, *args, **kwargs):
-        self.engine = utils.engine(config)
+        self.config = config
         os.chdir(self.engine.static_root)
         super().__init__(*args, **kwargs)
+
+    @property
+    def engine(self):
+        return utils.engine(self.config)
 
 
 class Handler(SimpleHTTPRequestHandler):  # pragma: no cover
