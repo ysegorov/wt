@@ -1,3 +1,5 @@
+**This project is archived.**
+
 # wt - static blog generator
 
 ![Logo](misc/logo96.png)
@@ -27,7 +29,8 @@ something easy to work with".
 
 ## Documentation
 
-`wt` documentation is available [online][wt-docs].
+`wt` documentation is not available online but you can check
+`docs/content/pages/` folder for it.
 
 
 ## How
